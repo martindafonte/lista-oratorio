@@ -6,8 +6,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const compression = require('compression');
 const rp = require('request-promise');
-const db = require('./database');
-
+// const db = require('./database');
 const app = express();
 
 
@@ -24,23 +23,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 //DEMO Cambiar y borrar
 app.get("/", (request, response) => {
-  response.sendFile(__dirname + '/views/index.html')
-})
-// Simple in-memory store
-const dreams = [
-  "Find and count some sheep",
-  "Climb a really tall mountain",
-  "Wash the dishes"
-]
-
-app.get("/dreams", (request, response) => {
-  response.send(dreams)
+  response.redirect('/index.html');
 })
 
-app.post("/dreams", (request, response) => {
-  dreams.push(request.query.dream)
-  response.sendStatus(200)
-})
+const dream_routes = require('./src/routes/dreams')(app);
 
 
 // listen for requests :)
