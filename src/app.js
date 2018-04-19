@@ -6,12 +6,14 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const compression = require('compression');
 const rp = require('request-promise');
+const morgan = require('morgan');
 // const db = require('./database');
 const app = express();
 
 
 // compress our client side content before sending it over the wire
 app.use(compression());
+app.use(morgan('dev'));
 
 //Permite servir todos los archivos de la carpeta public
 app.use(express.static('public'))
@@ -32,6 +34,11 @@ const dream_routes = require('./routes/dreams')(app);
 //Add WebHooks to route
 app.use('/api/webhook', require('./routes/web-hooks'));
 
+
+app.use(function (req, res) {
+  //No se encontró la URL
+  res.status(404).send({ error: true, message: 'No se encontró la URL especificada', url: req.originalUrl });
+})
 
 // listen for requests :)
 const listener = app.listen(process.env.PORT || 3000, () => {
