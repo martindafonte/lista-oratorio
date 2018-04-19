@@ -1,7 +1,7 @@
 # lista-oratorio
 Herramienta para el pasaje de lista de oratorios utilizando Trello
 
-##Welcome to the Glitch BETA
+## Welcome to the Glitch BETA
 
 Click `Show` in the header to see your app live. Updates to your code will instantly deploy and update live.
 
