@@ -18,6 +18,7 @@ app.use(express.static('public'))
 
 // ayuda a parsear el contenido del body en los métodos POST
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 
 
@@ -26,7 +27,10 @@ app.get("/", (request, response) => {
   response.redirect('/index.html');
 })
 
-const dream_routes = require('./src/routes/dreams')(app);
+const dream_routes = require('./routes/dreams')(app);
+
+//Add WebHooks to route
+app.use('/api/webhook', require('./routes/web-hooks'));
 
 
 // listen for requests :)
