@@ -1,7 +1,8 @@
 // server.js
 // where your node app starts
 
-// init project
+require('dotenv').config();//Load dot env variables
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const compression = require('compression');
