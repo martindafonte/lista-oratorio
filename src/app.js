@@ -6,7 +6,7 @@ require('dotenv').config();//Load dot env variables
 const express = require('express');
 const bodyParser = require('body-parser');
 const compression = require('compression');
-const rp = require('request-promise');
+const rp = require('request-promise-native');
 const morgan = require('morgan');
 // const db = require('./database');
 const app = express();
