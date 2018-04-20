@@ -1,4 +1,3 @@
-const Trello = require('node-trello');
 const User = require('./../models/user');
 const querystring = require("querystring");
 const request_promise = require('request-promise-native');
@@ -10,20 +9,69 @@ module.exports = class TrelloApiClient {
    */
   constructor(user) {
     this.user = user;
-  }
-
-  /**
-   * 
-   * @param {string} board_id 
-   * @returns {Promise<Array>}
-   */
-  async getLists(board_id) {
     if (!this._authenticateUser(this.user)) {
       //TODO: Tirrar error y salir
     }
-    let client = new Trello(this.user.api_key, this.user.token);
-    let res = await this._callTrello('GET', `/boards/${board_id}/lists`, this.user);
+  }
+
+
+  /**
+   * Get the array of Lists on a board
+   * @param {string} board_id id of the board
+   * @returns {Promise<Array>}
+   */
+  async getLists(board_id) {
+    let res = await this._callTrello('GET', `/boards/${board_id}/lists`, { filter: 'open' });
     return res;
+  }
+
+  /**
+     * Get the array of cards with its cards for a board
+     * @param {string} board_id id of the board
+     * @returns {Promise<Array>}
+     */
+  async getAllCards(board_id) {
+    let options = { cards: 'visible', card_fields: 'name,id,idList', checklists: 'all' };
+    let res = await this._callTrello('GET', `/boards/${board_id}/cards`, options);
+    return res;
+  }
+
+  //Permite obtener los checklist que están marcados
+  //checkItemStates: 'true'
+
+  async getCardDetails(card_id) {
+    let options = { fields: 'id,name,idChecklists', checklists: 'all', checklist_fields: 'id,name' };
+    let res = await this._callTrello('GET', `/cards/${card_id}`, options);
+    return res;
+  }
+
+  async getCardsForList(list_id) {
+    let options = { cards: 'open', fields: 'id,name' };
+    let res = await this._callTrello('GET', `/lists/${list_id}/cards`, options);
+    return res;
+  }
+
+  async getListsWithCards(board_id) {
+    let options = { cards: 'open', fields: 'id,name', card_fields: 'name,id' };
+    let res = await this._callTrello('GET', `/boards/${board_id}/lists`, options);
+    return res;
+  }
+
+  async crearCheckList(card_id, checklist_name) {
+    let options = { name: checklist_name, pos: 'top' };
+    let res = await this._callTrello('POST', `/cards/${card_id}/checklists`, options);
+    return res;
+  }
+
+  async removeChecklistItem(checklist_id, item_id) {
+    let res = await this._callTrello('DELETE', `/checklists/${checklist_id}/checkItems/${item_id}`);
+    return res;
+  }
+
+  async addChecklistItem(checklist_id, item_name) {
+    let options = { name: item_name, pos: 'bottom', checked: false };
+    let res = await this._callTrello('POST', `/checklists/${checklist_id}/checkItems`, options);
+    return Promise.resolve();
   }
 
 
@@ -33,11 +81,12 @@ module.exports = class TrelloApiClient {
   }
 
 
+
   /**
-   * 
-   * @param {*} method 
-   * @param {*} uri 
-   * @param {*} args 
+   * Makes a Call to Trello API
+   * @param {string} method HTTP method to call
+   * @param {string} uri partial uri to call, not necesary to include trello domain and version
+   * @param {any} args object with arguments
    * @returns {Promise}
    */
   _callTrello(method, uri, args = null) {
@@ -46,7 +95,7 @@ module.exports = class TrelloApiClient {
     var url = host + (uri[0] === "/" ? "" : "/") + uri;
 
     if (method === "GET") {
-      url += "?" + querystring.stringify(this._addAuthArgs(this._parseQuery(uri, args)));
+      url += "?" + querystring.stringify(this._addAuthArgs(TrelloApiClient._parseQuery(uri, args)));
     }
     var options = {
       url: url,
@@ -67,8 +116,9 @@ module.exports = class TrelloApiClient {
       }
     }
     else {
-      options.json = this._addAuthArgs(this._parseQuery(uri, args));
+      options.json = this._addAuthArgs(TrelloApiClient._parseQuery(uri, args));
     }
+    console.log('Making request with:' + JSON.stringify(options));
     return request_promise[method.toLowerCase()](options);
   }
 
@@ -84,7 +134,7 @@ module.exports = class TrelloApiClient {
     return args;
   }
 
-  _parseQuery(uri, args) {
+  static _parseQuery(uri, args) {
     if (uri.indexOf("?") !== -1) {
       var ref = querystring.parse(uri.split("?")[1]);
 
@@ -95,5 +145,12 @@ module.exports = class TrelloApiClient {
     }
     return args;
   }
+
+  static _groupBy(xs, key) {
+    return xs.reduce(function (rv, x) {
+      (rv[x[key]] = rv[x[key]] || []).push(x);
+      return rv;
+    }, {});
+  };
 
 }
