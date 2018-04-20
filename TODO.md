@@ -7,3 +7,7 @@
 
 # Paquete Node Trello 
 - Cambiar la declaración de export de Trello para el final, así funciona mejor intelisense
+
+# Paquete trello web hook types
+- Agregar tipos faltantes
+- Ej: archivar tarjeta, mover tarjeta de otro tablero, editar custom field?

@@ -1,0 +1,475 @@
+[
+  {
+    "accion": "ADD_ITEM",
+    "body": {
+      "model": {
+        "id": "5ad8d37e0901fadc3a9d631c",
+        "name": "Prueba",
+        "desc": "",
+        "descData": null,
+        "closed": false,
+        "idOrganization": null,
+        "pinned": false,
+        "url": "https://trello.com/b/0rE87dGP/prueba",
+        "shortUrl": "https://trello.com/b/0rE87dGP",
+        "prefs": {
+          "permissionLevel": "private",
+          "voting": "disabled",
+          "comments": "members",
+          "invitations": "members",
+          "selfJoin": false,
+          "cardCovers": true,
+          "cardAging": "regular",
+          "calendarFeedEnabled": false,
+          "background": "5ad7808ff4fd350987ccedc7",
+          "backgroundImage": "https://trello-backgrounds.s3.amazonaws.com/SharedBackground/2560x1920/5e23ee9a857b6e2a2c8f3838bab90ace/photo-1523947204020-b03d6498b702",
+          "backgroundImageScaled": [
+            {
+              "width": 133,
+              "height": 100,
+              "url": "https://trello-backgrounds.s3.amazonaws.com/SharedBackground/133x100/6498daa2c804166ee4d4c5d126d1aecc/photo-1523947204020-b03d6498b702.jpg"
+            },
+            {
+              "width": 256,
+              "height": 192,
+              "url": "https://trello-backgrounds.s3.amazonaws.com/SharedBackground/256x192/9adfcd3bcc94f72c30e8c745735b1649/photo-1523947204020-b03d6498b702.jpg"
+            },
+            {
+              "width": 480,
+              "height": 360,
+              "url": "https://trello-backgrounds.s3.amazonaws.com/SharedBackground/480x360/5e010d8e5043402a158045b53bb7ddee/photo-1523947204020-b03d6498b702.jpg"
+            },
+            {
+              "width": 960,
+              "height": 720,
+              "url": "https://trello-backgrounds.s3.amazonaws.com/SharedBackground/960x720/f7a40de0af1216a446d386638f4fc67f/photo-1523947204020-b03d6498b702.jpg"
+            },
+            {
+              "width": 1024,
+              "height": 768,
+              "url": "https://trello-backgrounds.s3.amazonaws.com/SharedBackground/1024x768/74a1eae8e64c4889338a69eb040054e3/photo-1523947204020-b03d6498b702.jpg"
+            },
+            {
+              "width": 2048,
+              "height": 1536,
+              "url": "https://trello-backgrounds.s3.amazonaws.com/SharedBackground/2048x1536/b9150259123c4d700c059007c7a55376/photo-1523947204020-b03d6498b702.jpg"
+            },
+            {
+              "width": 1280,
+              "height": 960,
+              "url": "https://trello-backgrounds.s3.amazonaws.com/SharedBackground/1280x960/b187435760e3439ac691db1ef4a46153/photo-1523947204020-b03d6498b702.jpg"
+            },
+            {
+              "width": 1920,
+              "height": 1440,
+              "url": "https://trello-backgrounds.s3.amazonaws.com/SharedBackground/1920x1440/09a4ab46b65a6de6c33554b7f5777c46/photo-1523947204020-b03d6498b702.jpg"
+            },
+            {
+              "width": 2133,
+              "height": 1600,
+              "url": "https://trello-backgrounds.s3.amazonaws.com/SharedBackground/2133x1600/0520424fde0a8005f870afc650f624a6/photo-1523947204020-b03d6498b702.jpg"
+            },
+            {
+              "width": 2560,
+              "height": 1920,
+              "url": "https://trello-backgrounds.s3.amazonaws.com/SharedBackground/2560x1920/5e23ee9a857b6e2a2c8f3838bab90ace/photo-1523947204020-b03d6498b702"
+            }
+          ],
+          "backgroundTile": false,
+          "backgroundBrightness": "dark",
+          "backgroundBottomColor": "#3a0440",
+          "backgroundTopColor": "#2f0444",
+          "canBePublic": true,
+          "canBeOrg": true,
+          "canBePrivate": true,
+          "canInvite": true
+        },
+        "labelNames": {
+          "green": "",
+          "yellow": "",
+          "orange": "",
+          "red": "",
+          "purple": "",
+          "blue": "",
+          "sky": "",
+          "lime": "",
+          "pink": "",
+          "black": ""
+        }
+      },
+      "action": {
+        "id": "5ad8d5cd7cdd6fbe8de6813e",
+        "idMemberCreator": "53ee2ac5f52440f13a3a7e2b",
+        "data": {
+          "board": {
+            "shortLink": "0rE87dGP",
+            "name": "Prueba",
+            "id": "5ad8d37e0901fadc3a9d631c"
+          },
+          "list": {
+            "name": "Lista 3",
+            "id": "5ad8d3873e7c7413a5a5b901"
+          },
+          "card": {
+            "shortLink": "SxrIRvsI",
+            "idShort": 3,
+            "name": "Nueva card",
+            "id": "5ad8d5cd7cdd6fbe8de6813d"
+          }
+        },
+        "type": "createCard",
+        "date": "2018-04-19T17:45:49.064Z",
+        "limits": {},
+        "display": {
+          "translationKey": "action_create_card",
+          "entities": {
+            "card": {
+              "type": "card",
+              "id": "5ad8d5cd7cdd6fbe8de6813d",
+              "shortLink": "SxrIRvsI",
+              "text": "Nueva card"
+            },
+            "list": {
+              "type": "list",
+              "id": "5ad8d3873e7c7413a5a5b901",
+              "text": "Lista 3"
+            },
+            "memberCreator": {
+              "type": "member",
+              "id": "53ee2ac5f52440f13a3a7e2b",
+              "username": "martindafonte",
+              "text": "Martin Da Fonte"
+            }
+          }
+        },
+        "memberCreator": {
+          "id": "53ee2ac5f52440f13a3a7e2b",
+          "avatarHash": "112a20efd63fede218f6ce195251a6ee",
+          "fullName": "Martin Da Fonte",
+          "initials": "MDF",
+          "username": "martindafonte"
+        }
+      }
+    }
+  },
+  {
+    "accion": "MOVE_ITEM",
+    "body": {
+      "model": {
+        "id": "5ad8d37e0901fadc3a9d631c",
+        "name": "Prueba",
+        "desc": "",
+        "descData": null,
+        "closed": false,
+        "idOrganization": null,
+        "pinned": false,
+        "url": "https://trello.com/b/0rE87dGP/prueba",
+        "shortUrl": "https://trello.com/b/0rE87dGP",
+        "prefs": {
+          "permissionLevel": "private",
+          "voting": "disabled",
+          "comments": "members",
+          "invitations": "members",
+          "selfJoin": false,
+          "cardCovers": true,
+          "cardAging": "regular",
+          "calendarFeedEnabled": false,
+          "background": "5ad7808ff4fd350987ccedc7",
+          "backgroundImage": "https://trello-backgrounds.s3.amazonaws.com/SharedBackground/2560x1920/5e23ee9a857b6e2a2c8f3838bab90ace/photo-1523947204020-b03d6498b702",
+          "backgroundImageScaled": [
+            {
+              "width": 133,
+              "height": 100,
+              "url": "https://trello-backgrounds.s3.amazonaws.com/SharedBackground/133x100/6498daa2c804166ee4d4c5d126d1aecc/photo-1523947204020-b03d6498b702.jpg"
+            },
+            {
+              "width": 256,
+              "height": 192,
+              "url": "https://trello-backgrounds.s3.amazonaws.com/SharedBackground/256x192/9adfcd3bcc94f72c30e8c745735b1649/photo-1523947204020-b03d6498b702.jpg"
+            },
+            {
+              "width": 480,
+              "height": 360,
+              "url": "https://trello-backgrounds.s3.amazonaws.com/SharedBackground/480x360/5e010d8e5043402a158045b53bb7ddee/photo-1523947204020-b03d6498b702.jpg"
+            },
+            {
+              "width": 960,
+              "height": 720,
+              "url": "https://trello-backgrounds.s3.amazonaws.com/SharedBackground/960x720/f7a40de0af1216a446d386638f4fc67f/photo-1523947204020-b03d6498b702.jpg"
+            },
+            {
+              "width": 1024,
+              "height": 768,
+              "url": "https://trello-backgrounds.s3.amazonaws.com/SharedBackground/1024x768/74a1eae8e64c4889338a69eb040054e3/photo-1523947204020-b03d6498b702.jpg"
+            },
+            {
+              "width": 2048,
+              "height": 1536,
+              "url": "https://trello-backgrounds.s3.amazonaws.com/SharedBackground/2048x1536/b9150259123c4d700c059007c7a55376/photo-1523947204020-b03d6498b702.jpg"
+            },
+            {
+              "width": 1280,
+              "height": 960,
+              "url": "https://trello-backgrounds.s3.amazonaws.com/SharedBackground/1280x960/b187435760e3439ac691db1ef4a46153/photo-1523947204020-b03d6498b702.jpg"
+            },
+            {
+              "width": 1920,
+              "height": 1440,
+              "url": "https://trello-backgrounds.s3.amazonaws.com/SharedBackground/1920x1440/09a4ab46b65a6de6c33554b7f5777c46/photo-1523947204020-b03d6498b702.jpg"
+            },
+            {
+              "width": 2133,
+              "height": 1600,
+              "url": "https://trello-backgrounds.s3.amazonaws.com/SharedBackground/2133x1600/0520424fde0a8005f870afc650f624a6/photo-1523947204020-b03d6498b702.jpg"
+            },
+            {
+              "width": 2560,
+              "height": 1920,
+              "url": "https://trello-backgrounds.s3.amazonaws.com/SharedBackground/2560x1920/5e23ee9a857b6e2a2c8f3838bab90ace/photo-1523947204020-b03d6498b702"
+            }
+          ],
+          "backgroundTile": false,
+          "backgroundBrightness": "dark",
+          "backgroundBottomColor": "#3a0440",
+          "backgroundTopColor": "#2f0444",
+          "canBePublic": true,
+          "canBeOrg": true,
+          "canBePrivate": true,
+          "canInvite": true
+        },
+        "labelNames": {
+          "green": "",
+          "yellow": "",
+          "orange": "",
+          "red": "",
+          "purple": "",
+          "blue": "",
+          "sky": "",
+          "lime": "",
+          "pink": "",
+          "black": ""
+        }
+      },
+      "action": {
+        "id": "5ad8d5ee9c9983e5398ffe5f",
+        "idMemberCreator": "53ee2ac5f52440f13a3a7e2b",
+        "data": {
+          "listAfter": {
+            "name": "Lista 2",
+            "id": "5ad8d3855841c7736bd9c963"
+          },
+          "listBefore": {
+            "name": "Lista 3",
+            "id": "5ad8d3873e7c7413a5a5b901"
+          },
+          "board": {
+            "shortLink": "0rE87dGP",
+            "name": "Prueba",
+            "id": "5ad8d37e0901fadc3a9d631c"
+          },
+          "card": {
+            "shortLink": "YlxaPmfl",
+            "idShort": 2,
+            "name": "Otra tarjeta",
+            "id": "5ad8d5b72edcdda28e92003e",
+            "idList": "5ad8d3855841c7736bd9c963"
+          },
+          "old": {
+            "idList": "5ad8d3873e7c7413a5a5b901"
+          }
+        },
+        "type": "updateCard",
+        "date": "2018-04-19T17:46:22.406Z",
+        "limits": {},
+        "display": {
+          "translationKey": "action_move_card_from_list_to_list",
+          "entities": {
+            "card": {
+              "type": "card",
+              "idList": "5ad8d3855841c7736bd9c963",
+              "id": "5ad8d5b72edcdda28e92003e",
+              "shortLink": "YlxaPmfl",
+              "text": "Otra tarjeta"
+            },
+            "listBefore": {
+              "type": "list",
+              "id": "5ad8d3873e7c7413a5a5b901",
+              "text": "Lista 3"
+            },
+            "listAfter": {
+              "type": "list",
+              "id": "5ad8d3855841c7736bd9c963",
+              "text": "Lista 2"
+            },
+            "memberCreator": {
+              "type": "member",
+              "id": "53ee2ac5f52440f13a3a7e2b",
+              "username": "martindafonte",
+              "text": "Martin Da Fonte"
+            }
+          }
+        },
+        "memberCreator": {
+          "id": "53ee2ac5f52440f13a3a7e2b",
+          "avatarHash": "112a20efd63fede218f6ce195251a6ee",
+          "fullName": "Martin Da Fonte",
+          "initials": "MDF",
+          "username": "martindafonte"
+        }
+      }
+    }
+  },
+  {
+    "accion": "REMOVE_ITEM",
+    "body": {
+      "model": {
+        "id": "5ad8d37e0901fadc3a9d631c",
+        "name": "Prueba",
+        "desc": "",
+        "descData": null,
+        "closed": false,
+        "idOrganization": null,
+        "pinned": false,
+        "url": "https://trello.com/b/0rE87dGP/prueba",
+        "shortUrl": "https://trello.com/b/0rE87dGP",
+        "prefs": {
+          "permissionLevel": "private",
+          "voting": "disabled",
+          "comments": "members",
+          "invitations": "members",
+          "selfJoin": false,
+          "cardCovers": true,
+          "cardAging": "regular",
+          "calendarFeedEnabled": false,
+          "background": "5ad7808ff4fd350987ccedc7",
+          "backgroundImage": "https://trello-backgrounds.s3.amazonaws.com/SharedBackground/2560x1920/5e23ee9a857b6e2a2c8f3838bab90ace/photo-1523947204020-b03d6498b702",
+          "backgroundImageScaled": [
+            {
+              "width": 133,
+              "height": 100,
+              "url": "https://trello-backgrounds.s3.amazonaws.com/SharedBackground/133x100/6498daa2c804166ee4d4c5d126d1aecc/photo-1523947204020-b03d6498b702.jpg"
+            },
+            {
+              "width": 256,
+              "height": 192,
+              "url": "https://trello-backgrounds.s3.amazonaws.com/SharedBackground/256x192/9adfcd3bcc94f72c30e8c745735b1649/photo-1523947204020-b03d6498b702.jpg"
+            },
+            {
+              "width": 480,
+              "height": 360,
+              "url": "https://trello-backgrounds.s3.amazonaws.com/SharedBackground/480x360/5e010d8e5043402a158045b53bb7ddee/photo-1523947204020-b03d6498b702.jpg"
+            },
+            {
+              "width": 960,
+              "height": 720,
+              "url": "https://trello-backgrounds.s3.amazonaws.com/SharedBackground/960x720/f7a40de0af1216a446d386638f4fc67f/photo-1523947204020-b03d6498b702.jpg"
+            },
+            {
+              "width": 1024,
+              "height": 768,
+              "url": "https://trello-backgrounds.s3.amazonaws.com/SharedBackground/1024x768/74a1eae8e64c4889338a69eb040054e3/photo-1523947204020-b03d6498b702.jpg"
+            },
+            {
+              "width": 2048,
+              "height": 1536,
+              "url": "https://trello-backgrounds.s3.amazonaws.com/SharedBackground/2048x1536/b9150259123c4d700c059007c7a55376/photo-1523947204020-b03d6498b702.jpg"
+            },
+            {
+              "width": 1280,
+              "height": 960,
+              "url": "https://trello-backgrounds.s3.amazonaws.com/SharedBackground/1280x960/b187435760e3439ac691db1ef4a46153/photo-1523947204020-b03d6498b702.jpg"
+            },
+            {
+              "width": 1920,
+              "height": 1440,
+              "url": "https://trello-backgrounds.s3.amazonaws.com/SharedBackground/1920x1440/09a4ab46b65a6de6c33554b7f5777c46/photo-1523947204020-b03d6498b702.jpg"
+            },
+            {
+              "width": 2133,
+              "height": 1600,
+              "url": "https://trello-backgrounds.s3.amazonaws.com/SharedBackground/2133x1600/0520424fde0a8005f870afc650f624a6/photo-1523947204020-b03d6498b702.jpg"
+            },
+            {
+              "width": 2560,
+              "height": 1920,
+              "url": "https://trello-backgrounds.s3.amazonaws.com/SharedBackground/2560x1920/5e23ee9a857b6e2a2c8f3838bab90ace/photo-1523947204020-b03d6498b702"
+            }
+          ],
+          "backgroundTile": false,
+          "backgroundBrightness": "dark",
+          "backgroundBottomColor": "#3a0440",
+          "backgroundTopColor": "#2f0444",
+          "canBePublic": true,
+          "canBeOrg": true,
+          "canBePrivate": true,
+          "canInvite": true
+        },
+        "labelNames": {
+          "green": "",
+          "yellow": "",
+          "orange": "",
+          "red": "",
+          "purple": "",
+          "blue": "",
+          "sky": "",
+          "lime": "",
+          "pink": "",
+          "black": ""
+        }
+      },
+      "action": {
+        "id": "5ad8d5fe06355f25cd984ac4",
+        "idMemberCreator": "53ee2ac5f52440f13a3a7e2b",
+        "data": {
+          "list": {
+            "name": "Lista 2",
+            "id": "5ad8d3855841c7736bd9c963"
+          },
+          "board": {
+            "shortLink": "0rE87dGP",
+            "name": "Prueba",
+            "id": "5ad8d37e0901fadc3a9d631c"
+          },
+          "card": {
+            "shortLink": "YlxaPmfl",
+            "idShort": 2,
+            "name": "Otra tarjeta",
+            "id": "5ad8d5b72edcdda28e92003e",
+            "closed": true
+          },
+          "old": {
+            "closed": false
+          }
+        },
+        "type": "updateCard",
+        "date": "2018-04-19T17:46:38.814Z",
+        "limits": {},
+        "display": {
+          "translationKey": "action_archived_card",
+          "entities": {
+            "card": {
+              "type": "card",
+              "closed": true,
+              "id": "5ad8d5b72edcdda28e92003e",
+              "shortLink": "YlxaPmfl",
+              "text": "Otra tarjeta"
+            },
+            "memberCreator": {
+              "type": "member",
+              "id": "53ee2ac5f52440f13a3a7e2b",
+              "username": "martindafonte",
+              "text": "Martin Da Fonte"
+            }
+          }
+        },
+        "memberCreator": {
+          "id": "53ee2ac5f52440f13a3a7e2b",
+          "avatarHash": "112a20efd63fede218f6ce195251a6ee",
+          "fullName": "Martin Da Fonte",
+          "initials": "MDF",
+          "username": "martindafonte"
+        }
+      }
+    }
+  }
+]

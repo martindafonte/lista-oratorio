@@ -9,6 +9,13 @@
       "request": "launch",
       "name": "Launch Program",
       "program": "${workspaceFolder}\\src\\app.js"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "envFile": "${workspaceFolder}/.env" ,
+      "name": "Test",
+      "program": "${file}"
     }
   ]
 }

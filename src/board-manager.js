@@ -1,3 +1,5 @@
+const User = require('./models/user');
+const client = require('./helpers/trello-api-client');
 //Buscar todas las listas y tarjetas
 //  Para cada lista 
 //Buscar una tarjeta que tenga el mismo nombre
@@ -6,6 +8,11 @@
 
 
 class BoardManager {
+  /**
+   * Constructor de Board Manager
+   * @param {User} user 
+   * @param {string} board_id 
+   */
   constructor(user, board_id) {
     this.user = user;
     this.boardId = board_id;
@@ -25,7 +32,7 @@ class BoardManager {
   }
 
   async getLists() {
-    let lists = [];
+    let lists = await client.getLists(this.user, this.boardId);
     return BoardManager._filterList(lists);;
   }
 
