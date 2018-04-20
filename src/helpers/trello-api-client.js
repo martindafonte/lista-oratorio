@@ -143,7 +143,7 @@ module.exports = class TrelloApiClient {
     } else {
       options.json = this._addAuthArgs(TrelloApiClient._parseQuery(uri, args));
     }
-    console.log('Making request with:' + JSON.stringify(options));
+    // console.log('Making request with:' + JSON.stringify(options));
     return limiter().then(() => request_promise[method.toLowerCase()](options));
   }
 

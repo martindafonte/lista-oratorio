@@ -4,6 +4,8 @@ const User = require('./../models/user');
 const express = require('express');
 const router = express.Router();
 
+var current_request = {};
+
 router.get("/:id", (request, response) => {
   //TODO chequear si existe webhook id registrado
   console.log('Recibido request GET para id: ' + request.params.id);
@@ -11,16 +13,24 @@ router.get("/:id", (request, response) => {
 });
 
 router.post("/:id", (request, response) => {
-  console.log('Recibido request POST para id: ' + request.params.id);
-  console.log('Request body:' + request.body);
+  // console.log('Recibido request POST para id: ' + request.params.id);
+  // console.log('Request body:' + request.body);
   //TODO change for custom user
-  let user = new User('me', process.env.TRELLO_APIKEY, process.env.TRELLO_TOKEN);
-  let action_data = request.body.action;
-  let hook_action = web_hook_parser.getWebHookAction(action_data);
-  if (hook_action !== web_hook_parser.ACTIONS.NONE) {
-    let data = _getActionData(hook_action, action_data);
-    let board_manager = new BoardManger(user, data.board_id);
-    board_manager.updateAllLists();
+  let token = process.env.TRELLO_TOKEN;
+  //allow only one request per token
+  if (current_request[token] === undefined || current_request[token] === false) {
+    current_request[token] = true;
+    let user = new User('me', process.env.TRELLO_APIKEY, token);
+    let action_data = request.body.action;
+    let hook_action = web_hook_parser.getWebHookAction(action_data);
+    if (hook_action !== web_hook_parser.ACTIONS.NONE) {
+      let data = _getActionData(hook_action, action_data);
+      let board_manager = new BoardManger(user, data.board_id);
+      board_manager.updateAllLists().finally(() => current_request[token] = false);
+    }
+    console.log('Request was processes');
+  } else {
+    console.log('Request was NOT processes');
   }
   response.sendStatus(200)
 });
