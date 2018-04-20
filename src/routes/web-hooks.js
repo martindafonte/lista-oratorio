@@ -35,12 +35,12 @@ function _getActionData(hook_action, action_data) {
   switch (hook_action) {
     case web_hook_parser.ACTIONS.ADD_ITEM:
       return {
-        list: action_data.list.id,
+        list: action_data.data.list.id,
         board_id: action_data.data.board.id
       };
     case web_hook_parser.ACTIONS.REMOVE_ITEM:
       return {
-        list: action_data.list.id,
+        list: action_data.data.list.id,
         board_id: action_data.data.board.id
       };
     case web_hook_parser.ACTIONS.MOVE_ITEM:
@@ -54,7 +54,7 @@ function _getActionData(hook_action, action_data) {
       return {
         old: action_data.old.name,
         new: action_data.card.name,
-        list: action_data.list.id,
+        list: action_data.data.list.id,
         board_id: action_data.data.board.id
       };
     default:
