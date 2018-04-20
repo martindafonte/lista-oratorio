@@ -1,9 +1,10 @@
 # WebHooks
 
-- Al actualizar una tarjeta: si se cambia el nombre se debe cambiar el nombre en los checklist para poder encontrarla
-- Al crear una tarjeta se debe agregar al checklist
-- Al borrar/archivar una tarjeta: Se debe sacar de la lista actual
-- Al mover una tarjeta: Se debe sacar de la lista actual y agregar a la nueva
+[] Al actualizar una tarjeta: si se cambia el nombre se debe cambiar el nombre en los checklist para poder encontrarla
+[x] Al crear una tarjeta se debe agregar al checklist
+[x] Al borrar/archivar una tarjeta: Se debe sacar de la lista actual
+[x] Al mover una tarjeta: Se debe sacar de la lista actual y agregar a la nueva
+[] Mantener las marcas de una tarjeta que se mueva o cambie el nombre
 - Generar cambios más específicos para reaccionar a un web hook a partir de los datos del mismo
 
 # Manejo de checklist

@@ -45,7 +45,7 @@ class BoardManager {
 
   async _processAllDatesInList(list) {
     let header_card = BoardManager._getHeaderCard(list.name, list.cards);
-    if (header_card === null) return;//No encontré header card
+    if (header_card == null) return;//No encontré header card
     let header_data = await this.client.getCardDetails(header_card.id);
     let card_name_array = BoardManager._getCardNameList(list.cards, header_card);
     if (header_data.checklists && header_data.checklists.length > 0) {
@@ -56,7 +56,7 @@ class BoardManager {
 
   async _processDateInList(date, list) {
     let header_card = BoardManager._getHeaderCard(list.name, list.cards);
-    if (header_card === null) return;//No encontré header card
+    if (header_card == null) return;//No encontré header card
     let header_data = await this.client.getCardDetails(header_card.id);
     let card_name_array = BoardManager._getCardNameList(list.cards, header_card);
 

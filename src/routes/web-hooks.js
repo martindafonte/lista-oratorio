@@ -4,7 +4,6 @@ const User = require('./../models/user');
 const express = require('express');
 const router = express.Router();
 
-var current_request = {};
 
 router.get("/:id", (request, response) => {
   //TODO chequear si existe webhook id registrado
@@ -17,20 +16,13 @@ router.post("/:id", (request, response) => {
   // console.log('Request body:' + request.body);
   //TODO change for custom user
   let token = process.env.TRELLO_TOKEN;
-  //allow only one request per token
-  if (current_request[token] === undefined || current_request[token] === false) {
-    current_request[token] = true;
-    let user = new User('me', process.env.TRELLO_APIKEY, token);
-    let action_data = request.body.action;
-    let hook_action = web_hook_parser.getWebHookAction(action_data);
-    if (hook_action !== web_hook_parser.ACTIONS.NONE) {
-      let data = _getActionData(hook_action, action_data);
-      let board_manager = new BoardManger(user, data.board_id);
-      board_manager.updateAllLists().finally(() => current_request[token] = false);
-    }
-    console.log('Request was processes');
-  } else {
-    console.log('Request was NOT processes');
+  let user = new User('me', process.env.TRELLO_APIKEY, token);
+  let action_data = request.body.action;
+  let hook_action = web_hook_parser.getWebHookAction(action_data);
+  if (hook_action !== web_hook_parser.ACTIONS.NONE) {
+    let data = _getActionData(hook_action, action_data);
+    let board_manager = new BoardManger(user, data.board_id);
+    board_manager.updateAllLists();
   }
   response.sendStatus(200)
 });
@@ -55,15 +47,15 @@ function _getActionData(hook_action, action_data) {
       };
     case web_hook_parser.ACTIONS.MOVE_ITEM:
       return {
-        old: action_data.listBefore.id,
-        new: action_data.listAfter.id,
-        list: action_data.listAfter.id,
+        old: action_data.data.listBefore.id,
+        new: action_data.data.listAfter.id,
+        list: action_data.data.listAfter.id,
         board_id: action_data.data.board.id
       };
     case web_hook_parser.ACTIONS.RENAME_ITEM:
       return {
-        old: action_data.old.name,
-        new: action_data.card.name,
+        old: action_data.data.old.name,
+        new: action_data.data.card.name,
         list: action_data.data.list.id,
         board_id: action_data.data.board.id
       };
