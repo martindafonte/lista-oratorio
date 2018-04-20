@@ -1,4 +1,6 @@
 const web_hook_parser = require('./../helpers/web-hook-parser');
+const BoardManger = require('./../board-manager');
+const User = require('./../models/user');
 const express = require('express');
 const router = express.Router();
 
@@ -11,10 +13,14 @@ router.get("/:id", (request, response) => {
 router.post("/:id", (request, response) => {
   console.log('Recibido request POST para id: ' + request.params.id);
   console.log('Request body:' + request.body);
-  let data = request.body.action;
-  let action = web_hook_parser.getWebHookAction(data);
-  if (action !== web_hook_parser.ACTIONS.NONE) {
-    _processAction(action, data);
+  //TODO change for custom user
+  let user = new User('me', process.env.TRELLO_APIKEY, process.env.TRELLO_TOKEN);
+  let action_data = request.body.action;
+  let hook_action = web_hook_parser.getWebHookAction(action_data);
+  if (hook_action !== web_hook_parser.ACTIONS.NONE) {
+    let data = _getActionData(hook_action, action_data);
+    let board_manager = new BoardManger(user, data.board_id);
+    board_manager.updateAllLists();
   }
   response.sendStatus(200)
 });
@@ -22,30 +28,34 @@ router.post("/:id", (request, response) => {
 
 /**
  * Process a webhook, making the corresponding changes on the board
- * @param {any} action 
- * @param {any} data 
+ * @param {any} hook_action 
+ * @param {any} action_data 
  */
-function _processAction(action, data) {
-  switch (action) {
+function _getActionData(hook_action, action_data) {
+  switch (hook_action) {
     case web_hook_parser.ACTIONS.ADD_ITEM:
       return {
-        list: data.list.id
+        list: action_data.list.id,
+        board_id: action_data.data.board.id
       };
     case web_hook_parser.ACTIONS.REMOVE_ITEM:
       return {
-        list: data.list.id
+        list: action_data.list.id,
+        board_id: action_data.data.board.id
       };
     case web_hook_parser.ACTIONS.MOVE_ITEM:
       return {
-        old: data.listBefore.id,
-        new: data.listAfter.id,
-        list: data.listAfter.id
+        old: action_data.listBefore.id,
+        new: action_data.listAfter.id,
+        list: action_data.listAfter.id,
+        board_id: action_data.data.board.id
       };
     case web_hook_parser.ACTIONS.RENAME_ITEM:
       return {
-        old: data.old.name,
-        new: data.card.name,
-        list: data.list.id
+        old: action_data.old.name,
+        new: action_data.card.name,
+        list: action_data.list.id,
+        board_id: action_data.data.board.id
       };
     default:
       return null;
