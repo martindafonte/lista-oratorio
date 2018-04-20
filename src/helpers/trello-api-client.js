@@ -1,6 +1,9 @@
 const User = require('./../models/user');
 const querystring = require("querystring");
 const request_promise = require('request-promise-native');
+const rateLimit = require('rate-limit-promise')
+
+let limiter = rateLimit(300, 10000);
 
 module.exports = class TrelloApiClient {
   /**
@@ -21,17 +24,23 @@ module.exports = class TrelloApiClient {
    * @returns {Promise<Array>}
    */
   async getLists(board_id) {
-    let res = await this._callTrello('GET', `/boards/${board_id}/lists`, { filter: 'open' });
+    let res = await this._callTrello('GET', `/boards/${board_id}/lists`, {
+      filter: 'open'
+    });
     return res;
   }
 
   /**
-     * Get the array of cards with its cards for a board
-     * @param {string} board_id id of the board
-     * @returns {Promise<Array>}
-     */
+   * Get the array of cards with its cards for a board
+   * @param {string} board_id id of the board
+   * @returns {Promise<Array>}
+   */
   async getAllCards(board_id) {
-    let options = { cards: 'visible', card_fields: 'name,id,idList', checklists: 'all' };
+    let options = {
+      cards: 'visible',
+      card_fields: 'name,id,idList',
+      checklists: 'all'
+    };
     let res = await this._callTrello('GET', `/boards/${board_id}/cards`, options);
     return res;
   }
@@ -40,25 +49,39 @@ module.exports = class TrelloApiClient {
   //checkItemStates: 'true'
 
   async getCardDetails(card_id) {
-    let options = { fields: 'id,name,idChecklists', checklists: 'all', checklist_fields: 'id,name' };
+    let options = {
+      fields: 'id,name,idChecklists',
+      checklists: 'all',
+      checklist_fields: 'id,name'
+    };
     let res = await this._callTrello('GET', `/cards/${card_id}`, options);
     return res;
   }
 
   async getCardsForList(list_id) {
-    let options = { cards: 'open', fields: 'id,name' };
+    let options = {
+      cards: 'open',
+      fields: 'id,name'
+    };
     let res = await this._callTrello('GET', `/lists/${list_id}/cards`, options);
     return res;
   }
 
   async getListsWithCards(board_id) {
-    let options = { cards: 'open', fields: 'id,name', card_fields: 'name,id' };
+    let options = {
+      cards: 'open',
+      fields: 'id,name',
+      card_fields: 'name,id'
+    };
     let res = await this._callTrello('GET', `/boards/${board_id}/lists`, options);
     return res;
   }
 
   async crearCheckList(card_id, checklist_name) {
-    let options = { name: checklist_name, pos: 'top' };
+    let options = {
+      name: checklist_name,
+      pos: 'top'
+    };
     let res = await this._callTrello('POST', `/cards/${card_id}/checklists`, options);
     return res;
   }
@@ -69,7 +92,11 @@ module.exports = class TrelloApiClient {
   }
 
   async addChecklistItem(checklist_id, item_name) {
-    let options = { name: item_name, pos: 'bottom', checked: false };
+    let options = {
+      name: item_name,
+      pos: 'bottom',
+      checked: false
+    };
     let res = await this._callTrello('POST', `/checklists/${checklist_id}/checkItems`, options);
     return Promise.resolve();
   }
@@ -110,22 +137,20 @@ module.exports = class TrelloApiClient {
 
       if (typeof args.attachment === "string" || args.attachment instanceof String) {
         options.formData.url = args.attachment;
-      }
-      else {
+      } else {
         options.formData.file = args.attachment;
       }
-    }
-    else {
+    } else {
       options.json = this._addAuthArgs(TrelloApiClient._parseQuery(uri, args));
     }
     console.log('Making request with:' + JSON.stringify(options));
-    return request_promise[method.toLowerCase()](options);
+    return limiter().then(() => request_promise[method.toLowerCase()](options));
   }
 
   /**
    * 
    * @param {*} args 
-    */
+   */
   _addAuthArgs(args) {
     args.key = this.user.api_key;
     if (this.user.token) {
