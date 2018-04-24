@@ -21,8 +21,9 @@ class BoardManager {
 
 
   async updateAllLists() {
-    let lists = await this.client.getListsWithCards(this.boardId);
-    let promise_array = lists.map(list => this._processAllDatesInList(list));
+    let result = await this.client.getListsWithCards(this.boardId);
+    if (result.logIfError()) return;
+    let promise_array = result.data.map(list => this._updateAllDatesInList(list));
     await Promise.all(promise_array);
   }
 
@@ -31,8 +32,9 @@ class BoardManager {
    * @param {string} date Name of the ckeclist to add to the header card
    */
   async addDateToLists(date) {
-    let lists = await this.client.getListsWithCards(this.boardId);
-    let promise_array = lists.map(list => this._processDateInList(date, list));
+    let result = await this.client.getListsWithCards(this.boardId);
+    if (result.logIfError) return;
+    let promise_array = result.data.map(list => this._createOrUpdateDateInList(date, list));
     await Promise.all(promise_array);
   }
 
@@ -43,35 +45,47 @@ class BoardManager {
 
   // }
 
-  async _processAllDatesInList(list) {
+  async _updateAllDatesInList(list) {
     let header_card = BoardManager._getHeaderCard(list.name, list.cards);
-    if (header_card == null) return;//No encontré header card
-    let header_data = await this.client.getCardDetails(header_card.id);
+    if (header_card == null) return; //No encontré header card
+    let result = await this.client.getCardDetails(header_card.id);
+    if (result.logIfError) return;
+    let header_data = result.data;
     let card_name_array = BoardManager._getCardNameList(list.cards, header_card);
     if (header_data.checklists && header_data.checklists.length > 0) {
       let promises = header_data.checklists.map(x => this._updateChecklistInList(x, card_name_array));
-      await Promise.all(promises);
+      let results = await Promise.all(promises);
+      results.forEach(x => x.logIfError());
     }
   }
 
-  async _processDateInList(date, list) {
+  async _createOrUpdateDateInList(date, list) {
     let header_card = BoardManager._getHeaderCard(list.name, list.cards);
-    if (header_card == null) return;//No encontré header card
-    let header_data = await this.client.getCardDetails(header_card.id);
+    if (header_card == null) return; //No encontré header card
+    let result = await this.client.getCardDetails(header_card.id);
+    if (result.logIfError) return;
+    let header_data = result.data;
+
     let card_name_array = BoardManager._getCardNameList(list.cards, header_card);
 
     //Finds a checklist with the same name or create a new one
     if (header_data.checklists && header_data.checklists.length > 0) {
       var checklist = header_data.checklists.find(x => x.name.toLowerCase() == date.toLowerCase());
-      if (!checklist) checklist = await this.client.crearCheckList(header_data.id, date);
+      if (!checklist) {
+        let check_result = await this.client.crearCheckList(header_data.id, date);
+        if (check_result.logIfError()) return;
+        checklist = check_result.data;
+      }
     } else {
-      var checklist = await this.client.crearCheckList(header_data.id, date);
+      let check_result = await this.client.crearCheckList(header_data.id, date);
+      if (check_result.logIfError()) return;
+      var checklist = check_result.data;
     }
     await this._updateChecklistInList(checklist, card_name_array);
   }
 
   async _updateChecklistInList(checklist, card_name_array) {
-    checklist.checkItems = checklist.checkItems || [];//por si es null
+    checklist.checkItems = checklist.checkItems || []; //por si es null
     let changes = BoardManager._findDifferences(checklist.checkItems.map(x => x.name), card_name_array);
     let change_promise_array = [];
     changes.remove.forEach(x => {
@@ -83,7 +97,8 @@ class BoardManager {
       let promise = this.client.addChecklistItem(checklist.id, name);
       change_promise_array.push(promise);
     });
-    await Promise.all(change_promise_array);
+    let res = await Promise.all(change_promise_array);
+    res.forEach(x => x.logIfError());
   }
 
   static _getCardNameList(list, header_card) {
@@ -106,7 +121,10 @@ class BoardManager {
   }
 
   static _findDifferences(original_array, new_array) {
-    let ret = { remove: [], add: [] };
+    let ret = {
+      remove: [],
+      add: []
+    };
     //Tengo que sacar todos los que no encuentre en el nuevo arreglo
     ret.remove = original_array.filter(x => !new_array.find(y => y == x));
     //Tengo que agregar todos los que no existen en la vieja

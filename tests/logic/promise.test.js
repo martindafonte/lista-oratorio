@@ -1,6 +1,6 @@
 async function llamarPrueba() {
   let res = await prueba();
-  console.log('Valores: '+res);
+  console.log('Valores: ' + res);
   return res;
 }
 
@@ -8,7 +8,7 @@ function prueba() {
   return failedPromise().then((x) => {
     console.log('Funcionó correctamente');
     return x;
-  });
+  }).catch(err => 3);
 }
 
 function failedPromise() {
@@ -21,5 +21,5 @@ function failedPromise() {
 }
 
 llamarPrueba()
-  .then((x) => console.log('Todo terminó '+x))
-  .catch(err =>console.log(err));
+  .then((x) => console.log('Todo terminó ' + x))
+  .catch(err => console.log(err));

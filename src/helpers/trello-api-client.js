@@ -1,4 +1,5 @@
 const User = require('./../models/user');
+const Result = require('./api-call-result');
 const querystring = require("querystring");
 const request_promise = require('request-promise-native');
 const rateLimit = require('rate-limit-promise')
@@ -21,23 +22,19 @@ module.exports = class TrelloApiClient {
   /**
    * Get the array of Lists on a board
    * @param {string} board_id id of the board
-   * @returns {Promise<Array>}
+   * @returns {Promise<Result>}
    */
   async getLists(board_id) {
-    try {
-      let res = await this._callTrello('GET', `/boards/${board_id}/lists`, {
-        filter: 'open'
-      });
-      return res;
-    } catch (err) {
-      return err;
-    }
+    let res = await this._callTrello('GET', `/boards/${board_id}/lists`, {
+      filter: 'open'
+    });
+    return res;
   }
 
   /**
    * Get the array of cards with its cards for a board
    * @param {string} board_id id of the board
-   * @returns {Promise<Array>}
+   * @returns {Promise<Result>}
    */
   async getAllCards(board_id) {
     let options = {
@@ -51,7 +48,11 @@ module.exports = class TrelloApiClient {
 
   //Permite obtener los checklist que están marcados
   //checkItemStates: 'true'
-
+  /**
+   * 
+   * @param {*} card_id 
+   * @returns {Promise<Result>}
+   */
   async getCardDetails(card_id) {
     let options = {
       fields: 'id,name,idChecklists',
@@ -62,6 +63,11 @@ module.exports = class TrelloApiClient {
     return res;
   }
 
+  /**
+   * 
+   * @param {*} list_id 
+   * @returns {Promise<Result>}
+   */
   async getCardsForList(list_id) {
     let options = {
       cards: 'open',
@@ -71,6 +77,11 @@ module.exports = class TrelloApiClient {
     return res;
   }
 
+  /**
+   * 
+   * @param {*} board_id 
+   * @returns {Promise<Result>}
+   */
   async getListsWithCards(board_id) {
     let options = {
       cards: 'open',
@@ -81,6 +92,12 @@ module.exports = class TrelloApiClient {
     return res;
   }
 
+  /**
+   * 
+   * @param {*} card_id 
+   * @param {*} checklist_name 
+   * @returns {Promise<Result>}
+   */
   async crearCheckList(card_id, checklist_name) {
     let options = {
       name: checklist_name,
@@ -90,16 +107,29 @@ module.exports = class TrelloApiClient {
     return res;
   }
 
+  /**
+   * 
+   * @param {*} checklist_id 
+   * @param {*} item_id 
+   * @returns {Promise<Result>}
+   */
   async removeChecklistItem(checklist_id, item_id) {
     let res = await this._callTrello('DELETE', `/checklists/${checklist_id}/checkItems/${item_id}`);
     return res;
   }
 
-  async addChecklistItem(checklist_id, item_name) {
+  /**
+   * Adds a new checkitem with the given name to the card
+   * @param {string} checklist_id 
+   * @param {string} item_name 
+   * @param {boolean} checked 
+   * @returns {Promise<Result>}
+   */
+  async addChecklistItem(checklist_id, item_name, checked) {
     let options = {
       name: item_name,
       pos: 'bottom',
-      checked: false
+      checked: checked
     };
     let res = await this._callTrello('POST', `/checklists/${checklist_id}/checkItems`, options);
     return res;
@@ -118,7 +148,7 @@ module.exports = class TrelloApiClient {
    * @param {string} method HTTP method to call
    * @param {string} uri partial uri to call, not necesary to include trello domain and version
    * @param {any} args object with arguments
-   * @returns {Promise}
+   * @returns {Promise<Result>}
    * @throws Exceptions when a call failed on the API
    */
   _callTrello(method, uri, args = null) {
@@ -149,13 +179,11 @@ module.exports = class TrelloApiClient {
       options.json = this._addAuthArgs(TrelloApiClient._parseQuery(uri, args));
     }
     // console.log('Making request with:' + JSON.stringify(options));
-    return limiter().then(() => {
-      return request_promise[method.toLowerCase()](options);
-    }).catch(err => {
-      //Log exception
+    return limiter().then(() =>
+        request_promise[method.toLowerCase()](options))
+      .then(data => new Result(null, data))
       //TODO diferenciar si el error es de limiter o de request_promise
-      throw err;
-    });
+      .catch(err => new Result(err));
   }
 
   /**
