@@ -3,7 +3,7 @@ const assert = require('assert');
 const TrelloApiClient = require('./../../src/helpers/trello-api-client');
 const User = require('./../../src/models/user');
 
-describe('Trello Api Client', function (done) {
+describe('Trello Api Client', function () {
   var user = new User('me', process.env.TRELLO_APIKEY, process.env.TRELLO_TOKEN);
   var board_id = process.env.TRELLO_TEST_BOARD_ID;
   var client = new TrelloApiClient(user);
@@ -46,7 +46,7 @@ describe('Trello Api Client', function (done) {
         done(err)
       );
   });
-  
+
   it('Gets lists from a board', function (done) {
     client.getLists(board_id)
       .then(x => {
