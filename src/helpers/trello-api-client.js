@@ -24,10 +24,14 @@ module.exports = class TrelloApiClient {
    * @returns {Promise<Array>}
    */
   async getLists(board_id) {
-    let res = await this._callTrello('GET', `/boards/${board_id}/lists`, {
-      filter: 'open'
-    });
-    return res;
+    try {
+      let res = await this._callTrello('GET', `/boards/${board_id}/lists`, {
+        filter: 'open'
+      });
+      return res;
+    } catch (err) {
+      return err;
+    }
   }
 
   /**
@@ -98,7 +102,7 @@ module.exports = class TrelloApiClient {
       checked: false
     };
     let res = await this._callTrello('POST', `/checklists/${checklist_id}/checkItems`, options);
-    return Promise.resolve();
+    return res;
   }
 
 
@@ -115,6 +119,7 @@ module.exports = class TrelloApiClient {
    * @param {string} uri partial uri to call, not necesary to include trello domain and version
    * @param {any} args object with arguments
    * @returns {Promise}
+   * @throws Exceptions when a call failed on the API
    */
   _callTrello(method, uri, args = null) {
     let host = "https://api.trello.com/1";
@@ -144,7 +149,13 @@ module.exports = class TrelloApiClient {
       options.json = this._addAuthArgs(TrelloApiClient._parseQuery(uri, args));
     }
     // console.log('Making request with:' + JSON.stringify(options));
-    return limiter().then(() => request_promise[method.toLowerCase()](options));
+    return limiter().then(() => {
+      return request_promise[method.toLowerCase()](options);
+    }).catch(err => {
+      //Log exception
+      //TODO diferenciar si el error es de limiter o de request_promise
+      throw err;
+    });
   }
 
   /**
