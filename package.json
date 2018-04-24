@@ -6,7 +6,8 @@
   "version": "0.0.1",
   "description": "Aplicación para a utilizar trello como una herramienta para pasar lista",
   "scripts": {
-    "start": "node src/app.js"
+    "start": "node src/app.js",
+    "test": "mocha \"./{,!(node_modules)/**/}*.test.js\""
   },
   "dependencies": {
     "body-parser": "^1.18.2",
@@ -33,5 +34,8 @@
     "node",
     "glitch",
     "express"
-  ]
+  ],
+  "devDependencies": {
+    "mocha": "^5.1.1"
+  }
 }

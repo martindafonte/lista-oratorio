@@ -13,4 +13,4 @@ function test2() {
   manager.updateAllLists();
 }
 
-test2();
+//test2();
