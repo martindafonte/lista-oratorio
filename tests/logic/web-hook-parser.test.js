@@ -1,6 +1,6 @@
 const fs = require('fs');
 const assert = require('assert');
-const web_hook_parser = require('./../src/helpers/web-hook-parser');
+const web_hook_parser = require('./../../src/helpers/web-hook-parser');
 
 fs.readFile('tests/data/samplewebhooks.json', 'UTF8', function (err, data) {
   let json = JSON.parse(data);

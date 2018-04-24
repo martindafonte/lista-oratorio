@@ -7,7 +7,6 @@ module.exports = class User {
    * @param {string} token 
    */
   constructor(username, api_key, token) {
-    console.log(username + api_key + token);
     this.username = username;
     this.api_key = api_key;
     this.token = token;

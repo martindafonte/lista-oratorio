@@ -1,4 +1,4 @@
-const WebHook = require('./../src/models/webhook');
+const WebHook = require('./../../src/models/webhook');
 describe('webhook model', function () {
   it('should save a web hook', function (done) {
     var webhook = new WebHook('api_key', 'token', '123');

@@ -1,5 +1,5 @@
-const BoardManager = require('./../src/board-manager');
-const User = require('./../src/models/user');
+const BoardManager = require('./../../src/board-manager');
+const User = require('./../../src/models/user');
 
 
 var user = new User('me', process.env.TRELLO_APIKEY, process.env.TRELLO_TOKEN);
