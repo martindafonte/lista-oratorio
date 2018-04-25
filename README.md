@@ -1,6 +1,8 @@
 # lista-oratorio
 Herramienta para el pasaje de lista de oratorios utilizando Trello
 
+[![Build Status](https://travis-ci.org/martindafonte/lista-oratorio.svg?branch=master)](https://travis-ci.org/martindafonte/lista-oratorio)
+
 # Estructura del proyecto
 
 ## public
