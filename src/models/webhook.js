@@ -10,7 +10,7 @@ module.exports = class WebHook {
 
   saveWebHook(callback) {
     if (this._id == null) {
-      db.webhooks.insert(this._getData(), (err, doc) => callback(err, doc));
+      db.webhooks.insert(this._getData(), (err, doc) => { this._id = doc._id; callback(err, doc); });
     } else {
       db.webhooks.update({ _id: this._id }, { $set: this._getData() }, { returnUpdatedDocs: true },
         (err, numAffected, doc) => callback(err, doc));

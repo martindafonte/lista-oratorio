@@ -11,19 +11,47 @@ module.exports = class User {
     this.api_key = api_key;
     this.token = token;
     this._id = null;
+    this.boards_array = null;
   }
 
   saveUser(callback) {
     if (this._id == null) {
-      db.users.insert(this._getData(), (err, doc) => callback(err, doc));
+      db.users.insert(this._getData(), (err, doc) => { this._id = doc._id; callback(err, doc); });
     } else {
       db.users.update({ _id: this._id }, { $set: this._getData() }, { returnUpdatedDocs: true },
         (err, numAffected, doc) => callback(err, doc));
     }
   }
 
+  getConfiguredBoards(callback) {
+    try {
+      if (this.getConfiguredBoards == null) {
+        let query = this._id != null ? { _id: this._id } : { username: this.username };
+        db.users.findOne(query, (err, data) => {
+          if (err) {
+            callback(err, null); return;
+          }
+          this.boards_array = data.boards_array;
+          callback(err, this.boards_array);
+        });
+      }
+    }
+    catch (err) {
+      callback(err, null);
+    }
+  }
+
+  setConfiguredBoard(board) {
+    if (!this.boards_array)
+      this.boards_array = [];
+    this.boards_array.push(board);
+  }
+
   _getData() {
-    return { username: this.username, api_key: this.api_key, token: this.token };
+    let data = { username: this.username, api_key: this.api_key, token: this.token };
+    if (this.boards_array)
+      data.boards_array = this.boards_array;
+    return data;
   }
 
   static findUser(id, callback) {
