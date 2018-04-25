@@ -3,10 +3,11 @@ const router = express.Router();
 
 
 router.route("/")
-//Crear un nuevo checklist
-.post((request, response) => {
-    response.send('No implementado aún');
-})
+    //Crear un nuevo checklist
+    .post((request, response) => {
+        
+        response.send('No implementado aún');
+    })
 
 router.route("/close").post(
     (request, response) => {

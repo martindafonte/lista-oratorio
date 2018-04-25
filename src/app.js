@@ -12,12 +12,15 @@ const morgan = require('morgan');
 const app = express();
 
 
+// Set Template Engine
+app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'ejs');
+
+
 // compress our client side content before sending it over the wire
 app.use(compression());
 app.use(morgan('dev'));
 
-//Permite servir todos los archivos de la carpeta public
-app.use(express.static('public'))
 
 // ayuda a parsear el contenido del body en los métodos POST
 app.use(bodyParser.urlencoded({
@@ -25,18 +28,21 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
+//Permite servir todos los archivos de la carpeta public
+app.use(express.static('public'))
 
-
-//DEMO Cambiar y borrar
-app.get("/", (request, response) => {
-  response.redirect('/index.html');
-})
+//Configure default views
+require('./routes/default-views')(app);
 
 //Add WebHooks to route
 app.use('/api/webhook', require('./routes/web-hooks'));
 //Add list manager api
 app.use('/api/lists', require('./routes/list-manager-api'));
 
+//DEMO Cambiar y borrar
+app.get("/*", (request, response) => {
+  response.redirect('/');
+})
 
 app.use(function (req, res) {
   //No se encontró la URL
