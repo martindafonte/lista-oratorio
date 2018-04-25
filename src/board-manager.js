@@ -94,7 +94,7 @@ class BoardManager {
       change_promise_array.push(promise);
     });
     changes.add.forEach(name => {
-      let promise = this.client.addChecklistItem(checklist.id, name);
+      let promise = this.client.addChecklistItem(checklist.id, name, false);
       change_promise_array.push(promise);
     });
     let res = await Promise.all(change_promise_array);
