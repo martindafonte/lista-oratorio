@@ -32,8 +32,6 @@ app.get("/", (request, response) => {
   response.redirect('/index.html');
 })
 
-const dream_routes = require('./routes/dreams')(app);
-
 //Add WebHooks to route
 app.use('/api/webhook', require('./routes/web-hooks'));
 //Add list manager api
