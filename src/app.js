@@ -1,7 +1,7 @@
 // server.js
 // where your node app starts
 
-require('dotenv').config();//Load dot env variables
+require('dotenv').config(); //Load dot env variables
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -20,7 +20,9 @@ app.use(morgan('dev'));
 app.use(express.static('public'))
 
 // ayuda a parsear el contenido del body en los métodos POST
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
 app.use(bodyParser.json());
 
 
@@ -34,11 +36,17 @@ const dream_routes = require('./routes/dreams')(app);
 
 //Add WebHooks to route
 app.use('/api/webhook', require('./routes/web-hooks'));
+//Add list manager api
+app.use('/api/lists', require('./routes/list-manager-api'));
 
 
 app.use(function (req, res) {
   //No se encontró la URL
-  res.status(404).send({ error: true, message: 'No se encontró la URL especificada', url: req.originalUrl });
+  res.status(404).send({
+    error: true,
+    message: 'No se encontró la URL especificada',
+    url: req.originalUrl
+  });
 })
 
 // listen for requests :)
@@ -51,7 +59,7 @@ const listener = app.listen(process.env.PORT || 3000, () => {
 setInterval(function () {
   console.log('❤️ Keep Alive Heartbeat');
 
-  rp('https://glitch.com/#!/project/' + process.env.PROJECT_DOMAIN)
+  rp(process.env.BASE_URL)
     .then(() => {
       console.log('💗 Successfully sent http request to Glitch to stay awake.');
     })
