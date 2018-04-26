@@ -20,6 +20,7 @@
       <form action="/api/lists/" method="POST">
         Nuevo Checklist:
         <input type="text" name="date" maxlength="50" placeholder="21-Apr-2018"/>
+        <input type="hidden" name="board_id" hidden="true" value="${input.board_id}"/>
         <button type="submit">Crear Lista</button>
       </form>
     </main>
