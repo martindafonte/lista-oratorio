@@ -3,32 +3,32 @@
 
 require('dotenv').config(); //Load dot env variables
 
+require('marko/node-require');//Allow Node.js to load .marko files
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const compression = require('compression');
 const rp = require('request-promise-native');
 const morgan = require('morgan');
-// const db = require('./database');
+const marko_express = require('marko/express');
+
 const app = express();
 
-
-// Set Template Engine
-app.engine('html', require('ejs').renderFile);
-app.set('view engine', 'ejs');
 
 
 // compress our client side content before sending it over the wire
 app.use(compression());
 app.use(morgan('dev'));
 
+app.use(marko_express());//Enable res.marko(template, data)
 
-// ayuda a parsear el contenido del body en los métodos POST
+// Help to parse body content in POST calls
 app.use(bodyParser.urlencoded({
   extended: false
 }));
 app.use(bodyParser.json());
 
-//Permite servir todos los archivos de la carpeta public
+//Serves all files in public folder
 app.use(express.static('public'))
 
 //Configure default views
@@ -39,13 +39,13 @@ app.use('/api/webhook', require('./routes/web-hooks'));
 //Add list manager api
 app.use('/api/lists', require('./routes/list-manager-api'));
 
-//DEMO Cambiar y borrar
+
 app.get("/*", (request, response) => {
   response.redirect('/');
 })
 
 app.use(function (req, res) {
-  //No se encontró la URL
+  //URL Not found
   res.status(404).send({
     error: true,
     message: 'No se encontró la URL especificada',
