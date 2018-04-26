@@ -1,4 +1,4 @@
-const BoardManager = require('./../../src/board-manager');
+const BoardManager = require('./../../src/helpers/board-manager');
 const User = require('./../../src/models/user');
 
 

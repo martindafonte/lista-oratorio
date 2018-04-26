@@ -1,6 +1,6 @@
-const User = require('./models/user');
-const TrelloApiClient = require('./helpers/trello-api-client');
-const Result = require('./helpers/api-call-result');
+const User = require('./../models/user');
+const TrelloApiClient = require('./trello-api-client');
+const Result = require('./api-call-result');
 //Buscar todas las listas y tarjetas
 //  Para cada lista 
 //Buscar una tarjeta que tenga el mismo nombre

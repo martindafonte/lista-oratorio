@@ -1,6 +1,6 @@
 const express = require('express');
 const User = require('./../models/user');
-const BoardManager = require('./../board-manager');
+const BoardManager = require('./../helpers/board-manager');
 const router = express.Router();
 
 

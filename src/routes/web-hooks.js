@@ -1,5 +1,5 @@
 const web_hook_parser = require('./../helpers/web-hook-parser');
-const BoardManger = require('./../board-manager');
+const BoardManger = require('./../helpers/board-manager');
 const User = require('./../models/user');
 const express = require('express');
 const router = express.Router();
