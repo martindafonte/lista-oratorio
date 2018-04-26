@@ -31,8 +31,8 @@ app.use(bodyParser.json());
 //Serves all files in public folder
 app.use(express.static('public'))
 
-//Configure default views
-require('./routes/default-views')(app);
+//Configure default pages and views
+require('./routes/pages')(app);
 
 //Add WebHooks to route
 app.use('/api/webhook', require('./routes/web-hooks'));
