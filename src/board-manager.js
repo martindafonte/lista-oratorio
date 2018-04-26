@@ -1,5 +1,6 @@
 const User = require('./models/user');
 const TrelloApiClient = require('./helpers/trello-api-client');
+const Result = require('./helpers/api-call-result');
 //Buscar todas las listas y tarjetas
 //  Para cada lista 
 //Buscar una tarjeta que tenga el mismo nombre
@@ -24,7 +25,7 @@ class BoardManager {
     let result = await this.client.getListsWithCards(this.boardId);
     if (result.logIfError()) return;
     let promise_array = result.data.map(list => this._updateAllDatesInList(list));
-    await Promise.all(promise_array);
+    return BoardManager._resultFromPromiseArray(promise_array);
   }
 
   /**
@@ -33,9 +34,9 @@ class BoardManager {
    */
   async addDateToLists(date) {
     let result = await this.client.getListsWithCards(this.boardId);
-    if (result.logIfError) return;
+    if (result.logIfError()) return result;
     let promise_array = result.data.map(list => this._createOrUpdateDateInList(date, list));
-    await Promise.all(promise_array);
+    return BoardManager._resultFromPromiseArray(promise_array);
   }
 
   //Updates de checklists in the header card of the list
@@ -49,13 +50,12 @@ class BoardManager {
     let header_card = BoardManager._getHeaderCard(list.name, list.cards);
     if (header_card == null) return; //No encontré header card
     let result = await this.client.getCardDetails(header_card.id);
-    if (result.logIfError) return;
+    if (result.logIfError()) return;
     let header_data = result.data;
     let card_name_array = BoardManager._getCardNameList(list.cards, header_card);
     if (header_data.checklists && header_data.checklists.length > 0) {
-      let promises = header_data.checklists.map(x => this._updateChecklistInList(x, card_name_array));
-      let results = await Promise.all(promises);
-      results.forEach(x => x.logIfError());
+      let promise_array = header_data.checklists.map(x => this._updateChecklistInList(x, card_name_array));
+      return BoardManager._resultFromPromiseArray(promise_array);
     }
   }
 
@@ -63,25 +63,22 @@ class BoardManager {
     let header_card = BoardManager._getHeaderCard(list.name, list.cards);
     if (header_card == null) return; //No encontré header card
     let result = await this.client.getCardDetails(header_card.id);
-    if (result.logIfError) return;
+    if (result.logIfError()) return result;
     let header_data = result.data;
 
     let card_name_array = BoardManager._getCardNameList(list.cards, header_card);
 
     //Finds a checklist with the same name or create a new one
+    let checklist = null;
     if (header_data.checklists && header_data.checklists.length > 0) {
-      var checklist = header_data.checklists.find(x => x.name.toLowerCase() == date.toLowerCase());
-      if (!checklist) {
-        let check_result = await this.client.crearCheckList(header_data.id, date);
-        if (check_result.logIfError()) return;
-        checklist = check_result.data;
-      }
-    } else {
-      let check_result = await this.client.crearCheckList(header_data.id, date);
-      if (check_result.logIfError()) return;
-      var checklist = check_result.data;
+      checklist = header_data.checklists.find(x => x.name.toLowerCase() == date.toLowerCase());
     }
-    await this._updateChecklistInList(checklist, card_name_array);
+    if (!checklist) {
+      let check_result = await this.client.crearCheckList(header_data.id, date);
+      if (check_result.logIfError()) return check_result;
+      checklist = check_result.data;
+    }
+    return await this._updateChecklistInList(checklist, card_name_array);
   }
 
   async _updateChecklistInList(checklist, card_name_array) {
@@ -97,8 +94,13 @@ class BoardManager {
       let promise = this.client.addChecklistItem(checklist.id, name, false);
       change_promise_array.push(promise);
     });
-    let res = await Promise.all(change_promise_array);
-    res.forEach(x => x.logIfError());
+    return BoardManager._resultFromPromiseArray(change_promise_array);
+  }
+
+   static async _resultFromPromiseArray(promise_array) {
+    let results = await Promise.all(promise_array);
+    let error = results.find(x => x!= null && typeof x.logIfError == "function" && x.logIfError());
+    return error || new Result(null);
   }
 
   static _getCardNameList(list, header_card) {
@@ -110,7 +112,7 @@ class BoardManager {
     list_name = list_name.toLowerCase();
     let header_card = cards.find(x => x.name.toLowerCase() === list_name);
     if (!header_card) {
-      //TODO log error
+      //TODO log error?
     }
     return header_card;
   }
