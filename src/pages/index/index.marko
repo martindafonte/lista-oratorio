@@ -1,31 +1,32 @@
 <!doctype html>
 <html>
-<app-header/>
+  <app-header/>
   <body>
     <header>
       <h1>Trello Lista Alpha</h1>
     </header>
     <main>
-      <form action="/api/lists/close" method="POST">
-        Checklist:
-        <input type="text" name="date" maxlength="50" placeholder="21-Apr-2018"/>
-        <br/>
-        Comentario:
-        <input type="text" name="comment" maxlength="100"/>
-        <input type="hidden" name="board_id" hidden="true" value="${input.board_id}"/>
-        <button type="submit">Cerrar Lista</button>
-      </form>
-      <br/>
-      <br/>
+      <p>Crear una nueva lista en el tablero</p>
       <form action="/api/lists/" method="POST">
         Nuevo Checklist:
         <input type="text" name="date" maxlength="50" placeholder="21-Apr-2018"/>
         <input type="hidden" name="board_id" hidden="true" value="${input.board_id}"/>
         <button type="submit">Crear Lista</button>
       </form>
+      <br/>
+      <br/>
+      <p>Cerrar una de las listas existentes</p>
+      <form action="/api/lists/close" method="POST">
+        Checklist:
+        <input type="text" name="date" maxlength="50" placeholder="21-Apr-2018"/>
+        Comentario:
+        <input type="text" name="comment" maxlength="100"/>
+        <input type="hidden" name="board_id" hidden="true" value="${input.board_id}"/>
+        <button type="submit">Cerrar Lista</button>
+      </form>
     </main>
   </body>
-<app-footer/>
+  <app-footer/>
   <script src="https://code.jquery.com/jquery-2.2.1.min.js" integrity="sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00=" crossorigin="anonymous"/>
   <script src="/js/client.js"/>
 </html>
