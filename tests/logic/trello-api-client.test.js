@@ -14,7 +14,7 @@ describe('Trello Api Client', function () {
       assert.notEqual(x, undefined, 'Resultado no puede ser undefined');
       assert.notEqual(x, null, 'Resultado no puede ser null');
       assert.notEqual(x.ok, false, 'Resultado no puede ser falso');
-      assert.notEqual(x.length, 0, 'No se recuperó ninguna lista');
+      assert.notEqual(x.data.length, 0, 'No se recuperó ninguna lista');
       done();
     }).catch(err => {
       done(err);
@@ -27,7 +27,7 @@ describe('Trello Api Client', function () {
         assert.notEqual(res, undefined, 'Resultado no puede ser undefined');
         assert.notEqual(res, null, 'Resultado no puede ser null');
         assert.notEqual(res.ok, false, 'Resultado no puede ser falso');
-        assert.notEqual(res.length, 0, 'No se recuperó ninguna lista');
+        assert.notEqual(res.data.length, 0, 'No se recuperó ninguna lista');
         done();
       }).catch(err =>
         done(err)

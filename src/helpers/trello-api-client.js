@@ -4,7 +4,7 @@ const querystring = require("querystring");
 const request_promise = require('request-promise-native');
 const rateLimit = require('rate-limit-promise')
 
-let limiter = rateLimit(300, 10000);
+let limiter = rateLimit(95, 10000);//límite por token es de 100 cada 10s
 
 module.exports = class TrelloApiClient {
   /**

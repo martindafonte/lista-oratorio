@@ -108,7 +108,7 @@ class BoardManager {
   }
 
   static _getHeaderCard(list_name, cards) {
-    //TODO buscar dentro de las tarjetas de la lista la que tenga el mismo nombre
+    //TODO buscar en tarjetas de todo el tablero
     list_name = list_name.toLowerCase();
     let header_card = cards.find(x => x.name.toLowerCase() === list_name);
     if (!header_card) {
