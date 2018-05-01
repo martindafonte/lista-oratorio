@@ -7,14 +7,14 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Launch Program",
+      "name": "Iniciar servidor",
       "program": "${workspaceFolder}\\src\\app.js"
     },
     {
       "type": "node",
       "request": "launch",
       "envFile": "${workspaceFolder}/.env" ,
-      "name": "Test",
+      "name": "Test File",
       "program": "${file}"
     }
   ]
