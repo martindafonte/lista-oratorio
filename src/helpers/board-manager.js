@@ -18,12 +18,13 @@ class BoardManager {
     this.user = user;
     this.boardId = board_id;
     this.client = new TrelloApiClient(user);
+    this.default_checklist = '2018'; //TODO: cambiar por parámetro asociado al usuario o similar
   }
 
 
   async updateAllLists() {
     let result = await this.client.getListsWithCards(this.boardId);
-    if (result.logIfError()) return;
+    if (result.logIfError()) return result;
     let promise_array = result.data.map(list => this._updateAllDatesInList(list));
     return BoardManager._resultFromPromiseArray(promise_array);
   }
@@ -39,6 +40,35 @@ class BoardManager {
     return BoardManager._resultFromPromiseArray(promise_array);
   }
 
+  /**
+   * Close one checklis on the header cards of the board
+   * @param {string} date name of the checklist to close
+   */
+  async closeDate(date) {
+    let result = await this.client.getListsWithCards(this.boardId);
+    if (result.logIfError()) return result;
+    let promise_array = result.data.map(list => this.closeDateInList(date, list));
+    return BoardManager._resultFromPromiseArray(promise_array);
+  }
+
+  /**
+   * Close one checklis on the header cards of the given list
+   * @param {string} date name of the checklist to close
+   * @param {any} list list with its cards
+   */
+  async closeDateInList(date, list) {
+    let header_card = BoardManager._getHeaderCard(list.name, list.cards);
+    if (header_card == null) return null; //Header card not found
+    let result = await this.client.getCardDetails(header_card.id);
+    if (result.logIfError()) return result;
+    let header_data = result.data;
+    if (header_data.checklists && header_data.checklists.length > 0) {
+      let checklist = header_data.checklists.find(x => x.name == date);
+      if (checklist == null) return null; //There is no checklist with given name
+      let promise_array = checklist.checkItems.map(item => this._closeCheckItem(list.cards, item, date));
+      return BoardManager._resultFromPromiseArray(promise_array);
+    }
+  }
   //Updates de checklists in the header card of the list
   // async updateList(list_id) { }
   //Adds a new checklist in the header card of the list
@@ -46,11 +76,15 @@ class BoardManager {
 
   // }
 
+  async _closeCheckItem(cards, check_item, date) {
+    //TODO completar
+  }
+
   async _updateAllDatesInList(list) {
     let header_card = BoardManager._getHeaderCard(list.name, list.cards);
-    if (header_card == null) return; //No encontré header card
+    if (header_card == null) return null; //No encontré header card
     let result = await this.client.getCardDetails(header_card.id);
-    if (result.logIfError()) return;
+    if (result.logIfError()) return result;
     let header_data = result.data;
     let card_name_array = BoardManager._getCardNameList(list.cards, header_card);
     if (header_data.checklists && header_data.checklists.length > 0) {
@@ -61,7 +95,7 @@ class BoardManager {
 
   async _createOrUpdateDateInList(date, list) {
     let header_card = BoardManager._getHeaderCard(list.name, list.cards);
-    if (header_card == null) return; //No encontré header card
+    if (header_card == null) return null; //No encontré header card
     let result = await this.client.getCardDetails(header_card.id);
     if (result.logIfError()) return result;
     let header_data = result.data;
@@ -97,9 +131,10 @@ class BoardManager {
     return BoardManager._resultFromPromiseArray(change_promise_array);
   }
 
-   static async _resultFromPromiseArray(promise_array) {
+  static async _resultFromPromiseArray(promise_array) {
+    promise_array = promise_array.filter(x => x != null && x != undefined);
     let results = await Promise.all(promise_array);
-    let error = results.find(x => x!= null && typeof x.logIfError == "function" && x.logIfError());
+    let error = results.find(x => x != null && typeof x.logIfError == "function" && x.logIfError());
     return error || new Result(null);
   }
 
