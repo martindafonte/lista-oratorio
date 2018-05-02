@@ -24,20 +24,19 @@ db.ensureIndex({ fieldName: 'snoozeTime' }, function (err) {
   }
 });*/
 
-users.count({}, (err, count) => {
-  if (err) {
-    console.error(err);
-  } else {
-    console.info(`DB currently has ${count} users`);
-  }
-});
+_count(users, 'users');
+_count(webhooks, 'webhooks');
 
-webhooks.count({}, (err, count) => {
-  if (err) {
-    console.error(err);
-  } else {
-    console.info(`DB currently has ${count} webhooks`);
-  }
-});
 
-module.exports = { users: users, webhooks: webhooks };
+function _count(db, model_name) {
+  db.count({}, (err, count) => {
+    if (err) {
+      console.error(err);
+    } else {
+      console.info(`DB currently has ${count} ${model_name}`);
+    }
+  });
+}
+
+
+module.exports = { users: users, webhooks: webhooks};

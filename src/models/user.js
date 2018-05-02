@@ -1,5 +1,6 @@
 const db = require('./database');
-module.exports = class User {
+const BaseModel = require('./base-model');
+module.exports = class User extends BaseModel {
   /**
    * Constructor of class User
    * @param {string} username 
@@ -7,6 +8,7 @@ module.exports = class User {
    * @param {string} token 
    */
   constructor(username, api_key, token) {
+    super();
     this.username = username;
     this.api_key = api_key;
     this.token = token;
@@ -15,12 +17,7 @@ module.exports = class User {
   }
 
   saveUser(callback) {
-    if (this._id == null) {
-      db.users.insert(this._getData(), (err, doc) => { this._id = doc._id; callback(err, doc); });
-    } else {
-      db.users.update({ _id: this._id }, { $set: this._getData() }, { returnUpdatedDocs: true },
-        (err, numAffected, doc) => callback(err, doc));
-    }
+    this.saveOrUpdate(db.users, callback);
   }
 
   getConfiguredBoards(callback) {

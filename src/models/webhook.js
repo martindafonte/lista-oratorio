@@ -1,7 +1,15 @@
 const db = require('./database');
+const BaseModel = require('./base-model');
 
-module.exports = class WebHook {
+module.exports = class WebHook extends BaseModel {
+  /**
+ * Constructor of class WebHook
+ * @param {string} api_key 
+ * @param {string} token 
+ * @param {string} user_id 
+ */
   constructor(api_key, token, user_id) {
+    super();
     this.api_key = api_key;
     this.token = token;
     this.user_id = user_id;
@@ -9,12 +17,7 @@ module.exports = class WebHook {
   }
 
   saveWebHook(callback) {
-    if (this._id == null) {
-      db.webhooks.insert(this._getData(), (err, doc) => { this._id = doc._id; callback(err, doc); });
-    } else {
-      db.webhooks.update({ _id: this._id }, { $set: this._getData() }, { returnUpdatedDocs: true },
-        (err, numAffected, doc) => callback(err, doc));
-    }
+    this.saveOrUpdate(db.webhooks, callback);
   }
 
   _getData() {
@@ -23,8 +26,8 @@ module.exports = class WebHook {
 
   static findWebHook(id, callback) {
     db.webhooks.findOne({ _id: id }, (err, data) => {
-      if (err) {
-        callback(err);
+      if (err || data == null) {
+        callback(err || `Webhook ${id} couldn't be found`);
       } else {
         let web_hook = new WebHook(data.api_key, data.token, data.user_id);
         web_hook._id = data._id;
