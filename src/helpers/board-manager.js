@@ -26,7 +26,7 @@ class BoardManager {
     let result = await this.client.getListsWithCards(this.boardId);
     if (result.logIfError()) return result;
     let promise_array = result.data.map(list => this._updateAllDatesInList(list));
-    return BoardManager._resultFromPromiseArray(promise_array);
+    return await BoardManager._resultFromPromiseArray(promise_array);
   }
 
   /**
@@ -34,10 +34,7 @@ class BoardManager {
    * @param {string} date Name of the ckeclist to add to the header card
    */
   async addDateToLists(date) {
-    let result = await this.client.getListsWithCards(this.boardId);
-    if (result.logIfError()) return result;
-    let promise_array = result.data.map(list => this._createOrUpdateDateInList(date, list));
-    return BoardManager._resultFromPromiseArray(promise_array);
+    return await this._applyToAllLists(date, this._createOrUpdateDateInList);
   }
 
   /**
@@ -45,10 +42,7 @@ class BoardManager {
    * @param {string} date name of the checklist to close
    */
   async closeDate(date) {
-    let result = await this.client.getListsWithCards(this.boardId);
-    if (result.logIfError()) return result;
-    let promise_array = result.data.map(list => this.closeDateInList(date, list));
-    return BoardManager._resultFromPromiseArray(promise_array);
+    return await this._applyToAllLists(date, this.closeDateInList);
   }
 
   /**
@@ -66,7 +60,7 @@ class BoardManager {
       let checklist = header_data.checklists.find(x => x.name == date);
       if (checklist == null) return null; //There is no checklist with given name
       let promise_array = checklist.checkItems.map(item => this._closeCheckItem(list.cards, item, date));
-      return BoardManager._resultFromPromiseArray(promise_array);
+      return await BoardManager._resultFromPromiseArray(promise_array);
     }
   }
   //Updates de checklists in the header card of the list
@@ -76,8 +70,15 @@ class BoardManager {
 
   // }
 
+  async _applyToAllLists(date, method) {
+    let result = await this.client.getListsWithCards(this.boardId);
+    if (result.logIfError()) return result;
+    let promise_array = result.data.map(list => method(date, list));
+    return await BoardManager._resultFromPromiseArray(promise_array);
+  }
+
   async _closeCheckItem(cards, check_item, date) {
-    //TODO completar
+    throw new Error('Method not implemented yet: ' + cards.length + JSON.stringify(check_item) + date);
   }
 
   async _updateAllDatesInList(list) {
@@ -89,7 +90,7 @@ class BoardManager {
     let card_name_array = BoardManager._getCardNameList(list.cards, header_card);
     if (header_data.checklists && header_data.checklists.length > 0) {
       let promise_array = header_data.checklists.map(x => this._updateChecklistInList(x, card_name_array));
-      return BoardManager._resultFromPromiseArray(promise_array);
+      return await BoardManager._resultFromPromiseArray(promise_array);
     }
   }
 
@@ -128,7 +129,7 @@ class BoardManager {
       let promise = this.client.addChecklistItem(checklist.id, name, false);
       change_promise_array.push(promise);
     });
-    return BoardManager._resultFromPromiseArray(change_promise_array);
+    return await BoardManager._resultFromPromiseArray(change_promise_array);
   }
 
   static async _resultFromPromiseArray(promise_array) {

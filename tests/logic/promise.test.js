@@ -8,7 +8,7 @@ function prueba() {
   return failedPromise().then((x) => {
     console.log('Funcionó correctamente');
     return x;
-  }).catch(err => 3);
+  }).catch(err => console.log(err));
 }
 
 function failedPromise() {
