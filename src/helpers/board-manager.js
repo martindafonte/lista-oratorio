@@ -23,10 +23,7 @@ class BoardManager {
 
 
   async updateAllLists() {
-    let result = await this.client.getListsWithCards(this.boardId);
-    if (result.logIfError()) return result;
-    let promise_array = result.data.map(list => this._updateAllDatesInList(list));
-    return await BoardManager._resultFromPromiseArray(promise_array);
+    return await this._applyToAllLists(this._updateAllDatesInList);
   }
 
   /**
@@ -34,7 +31,7 @@ class BoardManager {
    * @param {string} date Name of the ckeclist to add to the header card
    */
   async addDateToLists(date) {
-    return await this._applyToAllLists(date, this._createOrUpdateDateInList);
+    return await this._applyToAllLists(this._createOrUpdateDateInList, date);
   }
 
   /**
@@ -42,7 +39,7 @@ class BoardManager {
    * @param {string} date name of the checklist to close
    */
   async closeDate(date) {
-    return await this._applyToAllLists(date, this.closeDateInList);
+    return await this._applyToAllLists(this.closeDateInList, date);
   }
 
   /**
@@ -50,7 +47,7 @@ class BoardManager {
    * @param {string} date name of the checklist to close
    * @param {any} list list with its cards
    */
-  async closeDateInList(date, list) {
+  async closeDateInList(list, date) {
     let result = await this._getHeaderCardDetails(list.name, list.cards);
     if (result.logIfError() || result.data == null) return result;
     let header_data = result.data;
@@ -62,10 +59,10 @@ class BoardManager {
     }
   }
 
-  async _applyToAllLists(date, method) {
+  async _applyToAllLists(method, date) {
     let result = await this.client.getListsWithCards(this.boardId);
     if (result.logIfError()) return result;
-    let promise_array = result.data.map(list => method(date, list));
+    let promise_array = result.data.map(list => method(list, date));
     return await BoardManager._resultFromPromiseArray(promise_array);
   }
 
@@ -84,7 +81,7 @@ class BoardManager {
     }
   }
 
-  async _createOrUpdateDateInList(date, list) {
+  async _createOrUpdateDateInList(list, date) {
     let result = await this._getHeaderCardDetails(list.name, list.cards);
     if (result.logIfError() || result.data == null) return result;
     let header_data = result.data;
