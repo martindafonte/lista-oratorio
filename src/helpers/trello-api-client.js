@@ -109,17 +109,6 @@ module.exports = class TrelloApiClient {
   }
 
   /**
-   * 
-   * @param {*} checklist_id 
-   * @param {*} item_id 
-   * @returns {Promise<Result>}
-   */
-  async removeChecklistItem(checklist_id, item_id) {
-    let res = await this._callTrello('DELETE', `/checklists/${checklist_id}/checkItems/${item_id}`);
-    return res;
-  }
-
-  /**
    * Adds a new checkitem with the given name to the card
    * @param {string} checklist_id 
    * @param {string} item_name 
@@ -136,6 +125,49 @@ module.exports = class TrelloApiClient {
     return res;
   }
 
+  /**
+   * Add a new comment to a card
+   * @param {string} card_id 
+   * @param {string} comment 
+   */
+  async addCommentToCard(card_id, comment) {
+    let options = {
+      text: comment,
+    };
+    return await this._callTrello('POST', `/cards/${card_id}/actions/comments`, options);
+  }
+
+  /**
+   * Updates a checklist item
+   * @param {string} card_id
+   * @param {string} checkitem_id 
+   * @param {boolean} checked 
+   */
+  async updateChecklistItem(card_id, checkitem_id, checked) {
+    let options = {
+      state: checked ? 'complete' : 'incomplete'
+    };
+    return await this._callTrello('PUT', `/cards/${card_id}/checkItem/${checkitem_id}`, options);
+  }
+
+  /**
+   * Remove a checklist item from a checklist
+   * @param {*} checklist_id 
+   * @param {*} item_id 
+   * @returns {Promise<Result>}
+   */
+  async removeChecklistItem(checklist_id, item_id) {
+    return await this._callTrello('DELETE', `/checklists/${checklist_id}/checkItems/${item_id}`);
+  }
+
+  /**
+   * Remove a checklist item from a checklist
+   * @param {*} checklist_id 
+   * @returns {Promise<Result>}
+   */
+  async removeChecklist(checklist_id) {
+    return await this._callTrello('DELETE', `/checklists/${checklist_id}`);
+  }
 
   async _authenticateUser(user) {
     //TODO comprobar si está autenticado, intentar autenticación y luego salir

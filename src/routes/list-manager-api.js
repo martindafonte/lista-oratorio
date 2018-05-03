@@ -21,7 +21,7 @@ router.post('/', (request, response) => {
         response.sendStatus(500).send('Ocurrió un error al crear la lista. ' + err));
 })
 
-//
+//Close a list
 router.post('/close', (request, response) => {
     let token = process.env.TRELLO_TOKEN;
     let user = new User('me', process.env.TRELLO_APIKEY, token);
@@ -30,8 +30,12 @@ router.post('/close', (request, response) => {
         return;
     }
     let manager = new BoardManager(user, request.body.board_id);
-    console.log(JSON.stringify(request.body));
-    response.send('No implementado aún');
+    manager.closeDate(request.body.date, request.body.comment).then(
+        res => {
+            if (res.error) response.status(500);
+            response.send(res.error || 'Operación exitosa');
+        }
+    ).catch(err => response.status(500).send(err));
 }
 )
 

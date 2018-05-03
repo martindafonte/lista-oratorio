@@ -40,6 +40,7 @@ class BoardManager {
    * Close one checklis on the header cards of the board
    * @param {string} date name of the checklist to close
    * @param {string} comment comment to add to the header card
+   * @returns {Promise<Result>}
    */
   async closeDate(date, comment) {
     return await this._applyToAllLists(this.closeDateInList, true, date, comment);
@@ -53,10 +54,17 @@ class BoardManager {
    * @param {Array} args [Optional] Additional arguments
    */
   async _applyToAllLists(method, with_checklists, date = null, ...args) {
-    let result = await this.client.getListsWithCards(this.boardId, with_checklists);
-    if (result.logIfError()) return result;
-    let promise_array = result.data.map(list => method(list, date, ...args));
-    return await BoardManager._resultFromPromiseArray(promise_array);
+    try {
+      let result = await this.client.getListsWithCards(this.boardId, with_checklists);
+      if (result.logIfError()) return result;
+      method = method.bind(this);
+      let promise_array = result.data.map(list => method(list, date, ...args));
+      return await BoardManager._resultFromPromiseArray(promise_array);
+    } catch (err) {
+      console.error(err);
+      return new Result(err);
+    }
+
   }
 
 
@@ -72,18 +80,30 @@ class BoardManager {
     if (header_data.checklists && header_data.checklists.length > 0) {
       let checklist = header_data.checklists.find(x => x.name == date);
       if (checklist == null) return null; //There is no checklist with given name
-      let promise_array = checklist.checkItems.map(item => this._closeCheckItem(list.cards, item, date));
-      //Add comment on header_card
-      return await BoardManager._resultFromPromiseArray(promise_array);
+      //Close checkitem for each card
+      let promise_array = checklist.checkItems.map(check_item => this._closeCheckItem(list.cards, check_item.name, check_item.state, date));
+      //Add comment to header card
+      let header_comment = BoardManager._processComment(checklist.checkItems, date, comment);
+      promise_array.push(this.client.addCommentToCard(header_data.id, header_comment));
+      let result_array = await BoardManager._resultFromPromiseArray(promise_array);
+      if (!result_array.ok) return result_array;
+      //If everything went right, delete the checklist from header card
+      return await this.client.removeChecklist(checklist.id);
     }
   }
 
 
-  async _closeCheckItem(cards, check_item, date) {
-    //Update or create card
-    //Create or update default checklist on card
-    //Add or update date on checklist
-    throw new Error('Method not implemented yet: ' + cards.length + JSON.stringify(check_item) + date);
+  async _closeCheckItem(cards, card_name, check_item_state, date) {
+    let card = BoardManager._findCardByName(card_name, cards);
+    if (card == null) {
+      throw new Error('Method not implemented yet: ' + cards.length + JSON.stringify(card_name) + date);
+    }
+    let checklist_result = await this._findOrCreateCheckList(card, this.default_checklist);
+    if (checklist_result.logIfError()) return checklist_result;
+    let state = check_item_state == 'complete';
+    let update_result = await this._updateOrCreateCheckItem(card.id, checklist_result.data, date, state);
+    if (update_result.logIfError()) return update_result;
+    return new Result(null, state);
   }
 
   async _updateAllDatesInList(list) {
@@ -95,25 +115,18 @@ class BoardManager {
       let promise_array = header_data.checklists.map(x => this._updateChecklistInList(x, card_name_array));
       return await BoardManager._resultFromPromiseArray(promise_array);
     }
+    return new Result(null, null);
   }
 
   async _createOrUpdateDateInList(list, date) {
     let result = await this._getHeaderCardDetails(list.name, list.cards);
     if (result.logIfError() || result.data == null) return result;
-    let header_data = result.data;
+    let header_card = result.data;
 
-    let card_name_array = BoardManager._getCardNameList(list.cards, header_data);
-
-    //Finds a checklist with the same name or create a new one
-    let checklist = null;
-    if (header_data.checklists && header_data.checklists.length > 0) {
-      checklist = header_data.checklists.find(x => x.name.toLowerCase() == date.toLowerCase());
-    }
-    if (!checklist) {
-      let check_result = await this.client.addCheckList(header_data.id, date);
-      if (check_result.logIfError()) return check_result;
-      checklist = check_result.data;
-    }
+    let card_name_array = BoardManager._getCardNameList(list.cards, header_card);
+    let checklist_result = await this._findOrCreateCheckList(header_card, date);
+    if (checklist_result.logIfError()) return checklist_result;
+    let checklist = checklist_result.data;
     return await this._updateChecklistInList(checklist, card_name_array);
   }
 
@@ -134,17 +147,66 @@ class BoardManager {
   }
 
   async _getHeaderCardDetails(list_name, cards) {
-    let header_card = BoardManager._getHeaderCard(list_name, cards);
+    //TODO buscar en tarjetas de todo el tablero
+    let header_card = BoardManager._findCardByName(list_name, cards);
     if (header_card == null) return new Result(null, null); //No encontré header card
     return await this.client.getCardDetails(header_card.id);
   }
 
+  /**
+   * Finds a checklist with the same name or create a new one
+   * @param {any} card Cards with its checklists
+   * @param {string} checklist_name Checklist name
+   */
+  async _findOrCreateCheckList(card, checklist_name) {
+    if (card.checklists && card.checklists.length > 0) {
+      let key = checklist_name.toLowerCase();
+      let checklist = card.checklists.find(x => x.name.toLowerCase() == key);
+      if (checklist != null) return new Result(null, checklist);
+    }
+    let check_result = await this.client.addCheckList(card.id, checklist_name);
+    return check_result;
+  }
+
+  /**
+   * Updates the state of a checkitem or creates a new one
+   * @param {string} card_id 
+   * @param {any} checklist 
+   * @param {string} item_name 
+   * @param {boolean} state 
+   */
+  async _updateOrCreateCheckItem(card_id, checklist, item_name, state) {
+    let key = item_name.toLowerCase();
+    let check_item = checklist.checkItems.find(x => x.name.toLowerCase() == key);
+    return check_item == null ?
+      await this.client.addChecklistItem(checklist.id, item_name, state) :
+      await this.client.updateChecklistItem(card_id, check_item.id, state);
+  }
 
   //-------------------------------------------------
   //----------------STATIC METHODS-------------------
   //-------------------------------------------------
 
+  /**
+   * Generates a new resume comment from the given parameters
+   * @param {*} check_items 
+   * @param {string} date 
+   * @param {string} comment 
+   * @returns {string} formatted comment
+   */
+  static _processComment(check_items, date, comment) {
+    let completed_items = check_items.filter(x => x.state == 'complete');
+    let total = check_items.length;
+    let cantidad = completed_items.length;
+    let detalle = completed_items.map(x => x.name).join(', ').trim();
+    return `${date}: ${comment}\nCantidad: ${cantidad}/${total}\nDetalle: ${detalle}`
+  }
 
+  /**
+   * Returns an unified Promise that resolves to Result
+   * @param {Array.<Promise>} promise_array 
+   * @returns {Promise<Result>}
+   */
   static async _resultFromPromiseArray(promise_array) {
     promise_array = promise_array.filter(x => x != null && x != undefined);
     let results = await Promise.all(promise_array);
@@ -161,10 +223,9 @@ class BoardManager {
     return list.filter(x => x.id !== header_card.id).map(x => x.name);
   }
 
-  static _getHeaderCard(list_name, cards) {
-    //TODO buscar en tarjetas de todo el tablero
-    list_name = list_name.toLowerCase();
-    let header_card = cards.find(x => x.name.toLowerCase() === list_name);
+  static _findCardByName(name, cards) {
+    name = name.toLowerCase();
+    let header_card = cards.find(x => x.name.toLowerCase() === name);
     return header_card;
   }
 
