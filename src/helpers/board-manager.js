@@ -1,12 +1,7 @@
 const User = require('./../models/user');
 const TrelloApiClient = require('./trello-api-client');
 const Result = require('./api-call-result');
-//Buscar todas las listas y tarjetas
-//  Para cada lista 
-//Buscar una tarjeta que tenga el mismo nombre
-//Armar un checklist de nombre "" en la tarjeta de nombre de la lista
-//Agregando todas las tarjetas de la lista original
-
+const BoardManagerUtils = require('./board-manager-utils');
 
 class BoardManager {
   /**
@@ -59,7 +54,7 @@ class BoardManager {
       if (result.logIfError()) return result;
       method = method.bind(this);
       let promise_array = result.data.map(list => method(list, date, ...args));
-      return await BoardManager._resultFromPromiseArray(promise_array);
+      return await BoardManagerUtils.resultFromPromiseArray(promise_array);
     } catch (err) {
       console.error(err);
       return new Result(err);
@@ -83,9 +78,9 @@ class BoardManager {
       //Close checkitem for each card
       let promise_array = checklist.checkItems.map(check_item => this._closeCheckItem(list.cards, check_item.name, check_item.state, date));
       //Add comment to header card
-      let header_comment = BoardManager._processComment(checklist.checkItems, date, comment);
+      let header_comment = BoardManagerUtils.processComment(checklist.checkItems, date, comment);
       promise_array.push(this.client.addCommentToCard(header_data.id, header_comment));
-      let result_array = await BoardManager._resultFromPromiseArray(promise_array);
+      let result_array = await BoardManagerUtils.resultFromPromiseArray(promise_array);
       if (!result_array.ok) return result_array;
       //If everything went right, delete the checklist from header card
       return await this.client.removeChecklist(checklist.id);
@@ -94,7 +89,7 @@ class BoardManager {
 
 
   async _closeCheckItem(cards, card_name, check_item_state, date) {
-    let card = BoardManager._findCardByName(card_name, cards);
+    let card = BoardManagerUtils.findCardByName(card_name, cards);
     if (card == null) {
       throw new Error('Method not implemented yet: ' + cards.length + JSON.stringify(card_name) + date);
     }
@@ -110,10 +105,10 @@ class BoardManager {
     let result = await this._getHeaderCardDetails(list.name, list.cards);
     if (result.logIfError() || result.data == null) return result;
     let header_data = result.data;
-    let card_name_array = BoardManager._getCardNameList(list.cards, header_data);
+    let card_name_array = BoardManagerUtils.getCardNameList(list.cards, header_data);
     if (header_data.checklists && header_data.checklists.length > 0) {
       let promise_array = header_data.checklists.map(x => this._updateChecklistInList(x, card_name_array));
-      return await BoardManager._resultFromPromiseArray(promise_array);
+      return await BoardManagerUtils.resultFromPromiseArray(promise_array);
     }
     return new Result(null, null);
   }
@@ -123,7 +118,7 @@ class BoardManager {
     if (result.logIfError() || result.data == null) return result;
     let header_card = result.data;
 
-    let card_name_array = BoardManager._getCardNameList(list.cards, header_card);
+    let card_name_array = BoardManagerUtils.getCardNameList(list.cards, header_card);
     let checklist_result = await this._findOrCreateCheckList(header_card, date);
     if (checklist_result.logIfError()) return checklist_result;
     let checklist = checklist_result.data;
@@ -132,7 +127,7 @@ class BoardManager {
 
   async _updateChecklistInList(checklist, card_name_array) {
     checklist.checkItems = checklist.checkItems || []; //por si es null
-    let changes = BoardManager._findDifferences(checklist.checkItems.map(x => x.name), card_name_array);
+    let changes = BoardManagerUtils.findDifferences(checklist.checkItems.map(x => x.name), card_name_array);
     let change_promise_array = [];
     changes.remove.forEach(x => {
       let item = checklist.checkItems.find(y => y.name == x);
@@ -143,12 +138,12 @@ class BoardManager {
       let promise = this.client.addChecklistItem(checklist.id, name, false);
       change_promise_array.push(promise);
     });
-    return await BoardManager._resultFromPromiseArray(change_promise_array);
+    return await BoardManagerUtils.resultFromPromiseArray(change_promise_array);
   }
 
   async _getHeaderCardDetails(list_name, cards) {
     //TODO buscar en tarjetas de todo el tablero
-    let header_card = BoardManager._findCardByName(list_name, cards);
+    let header_card = BoardManagerUtils.findCardByName(list_name, cards);
     if (header_card == null) return new Result(null, null); //No encontré header card
     return await this.client.getCardDetails(header_card.id);
   }
@@ -181,66 +176,6 @@ class BoardManager {
     return check_item == null ?
       await this.client.addChecklistItem(checklist.id, item_name, state) :
       await this.client.updateChecklistItem(card_id, check_item.id, state);
-  }
-
-  //-------------------------------------------------
-  //----------------STATIC METHODS-------------------
-  //-------------------------------------------------
-
-  /**
-   * Generates a new resume comment from the given parameters
-   * @param {*} check_items 
-   * @param {string} date 
-   * @param {string} comment 
-   * @returns {string} formatted comment
-   */
-  static _processComment(check_items, date, comment) {
-    let completed_items = check_items.filter(x => x.state == 'complete');
-    let total = check_items.length;
-    let cantidad = completed_items.length;
-    let detalle = completed_items.map(x => x.name).join(', ').trim();
-    return `${date}: ${comment}\nCantidad: ${cantidad}/${total}\nDetalle: ${detalle}`
-  }
-
-  /**
-   * Returns an unified Promise that resolves to Result
-   * @param {Array.<Promise>} promise_array 
-   * @returns {Promise<Result>}
-   */
-  static async _resultFromPromiseArray(promise_array) {
-    promise_array = promise_array.filter(x => x != null && x != undefined);
-    let results = await Promise.all(promise_array);
-    let error = results.find(x => x != null && typeof x.logIfError == "function" && x.logIfError());
-    return error || new Result(null);
-  }
-
-  /**
-   * Returns the array of names of the cards of the list, except the header card
-   * @param {*} list 
-   * @param {*} header_card 
-   */
-  static _getCardNameList(list, header_card) {
-    return list.filter(x => x.id !== header_card.id).map(x => x.name);
-  }
-
-  static _findCardByName(name, cards) {
-    name = name.toLowerCase();
-    let header_card = cards.find(x => x.name.toLowerCase() === name);
-    return header_card;
-  }
-
-  static _filterList(list_array) {
-    //TODO filtrar en base a los parámetros que se definan
-    return list_array.filter(() => true);
-  }
-
-  static _findDifferences(original_array, new_array) {
-    let ret = {};
-    //Remove all items not found on the new array
-    ret.remove = original_array.filter(x => !new_array.find(y => y == x));
-    //Add all items not existing on the new array
-    ret.add = new_array.filter(x => !original_array.find(y => y == x));
-    return ret;
   }
 }
 
