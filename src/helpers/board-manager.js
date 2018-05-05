@@ -95,9 +95,9 @@ class BoardManager {
     }
     let checklist_result = await this._findOrCreateCheckList(card, this.default_checklist);
     if (checklist_result.logIfError()) return checklist_result;
-    let state = check_item_state == 'complete';
-    let update_result = await this._updateOrCreateCheckItem(card.id, checklist_result.data, date, state);
+    let update_result = await this._updateOrCreateCheckItem(card.id, checklist_result.data, date, check_item_state == 'complete');
     if (update_result.logIfError()) return update_result;
+    let state = update_result.state == 'complete';
     return new Result(null, state);
   }
 
@@ -173,9 +173,13 @@ class BoardManager {
   async _updateOrCreateCheckItem(card_id, checklist, item_name, state) {
     let key = item_name.toLowerCase();
     let check_item = checklist.checkItems.find(x => x.name.toLowerCase() == key);
-    return check_item == null ?
-      await this.client.addChecklistItem(checklist.id, item_name, state) :
+    if (check_item == null) {
+      return await this.client.addChecklistItem(checklist.id, item_name, state);
+    } else if (check_item.state == 'complete') {
+      return check_item;
+    } else {
       await this.client.updateChecklistItem(card_id, check_item.id, state);
+    }
   }
 }
 
