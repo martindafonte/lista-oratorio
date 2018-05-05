@@ -178,7 +178,8 @@ class BoardManager {
     let check_item = checklist.checkItems.find(x => x.name.toLowerCase() == key);
     if (check_item == null) {
       return await this.client.addChecklistItem(checklist.id, item_name, state);
-    } else if (check_item.state == 'complete') {
+    } else if (check_item.state == 'complete' || !state) {
+      //No need to update 
       return new Result(null, check_item);
     } else {
       return await this.client.updateChecklistItem(card_id, check_item.id, state);
