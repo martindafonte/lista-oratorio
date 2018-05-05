@@ -2,12 +2,12 @@ const Result = require('./api-call-result');
 
 module.exports = class BoardManagerUtils {
   /**
-  * Generates a new resume comment from the given parameters
-  * @param {*} check_items 
-  * @param {string} date 
-  * @param {string} comment 
-  * @returns {string} formatted comment
-  */
+   * Generates a new resume comment from the given parameters
+   * @param {*} check_items 
+   * @param {string} date 
+   * @param {string} comment 
+   * @returns {string} formatted comment
+   */
   static processComment(check_items, date, comment) {
     let completed_items = check_items.filter(x => x.state == 'complete');
     let total = check_items.length;
@@ -23,9 +23,11 @@ module.exports = class BoardManagerUtils {
    */
   static async resultFromPromiseArray(promise_array) {
     promise_array = promise_array.filter(x => x != null && x != undefined);
-    let results = await Promise.all(promise_array);
-    let error = results.find(x => x != null && typeof x.logIfError == "function" && x.logIfError());
-    return error || new Result(null);
+    return Promise.all(promise_array).then(results => {
+        let error = results.find(x => x != null && typeof x.logIfError == "function" && x.logIfError());
+        return error || new Result(null);
+      })
+      .catch(err => new Result(err));
   }
 
   /**

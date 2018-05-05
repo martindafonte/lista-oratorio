@@ -179,9 +179,9 @@ class BoardManager {
     if (check_item == null) {
       return await this.client.addChecklistItem(checklist.id, item_name, state);
     } else if (check_item.state == 'complete') {
-      return check_item;
+      return new Result(null, check_item);
     } else {
-      await this.client.updateChecklistItem(card_id, check_item.id, state);
+      return await this.client.updateChecklistItem(card_id, check_item.id, state);
     }
   }
 }
