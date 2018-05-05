@@ -20,7 +20,7 @@ class BoardManager {
    * Update all checklists of all lists
    */
   async updateAllLists() {
-    return await this._applyToAllLists(this._updateAllDatesInList, false);
+    return await this._applyToAllLists(this._updateAllDatesInList);
   }
 
   /**
@@ -28,7 +28,7 @@ class BoardManager {
    * @param {string} date Name of the ckeclist to add to the header card
    */
   async addDateToLists(date) {
-    return await this._applyToAllLists(this._createOrUpdateDateInList, false, date);
+    return await this._applyToAllLists(this._createOrUpdateDateInList, date);
   }
 
   /**
@@ -38,19 +38,18 @@ class BoardManager {
    * @returns {Promise<Result>}
    */
   async closeDate(date, comment) {
-    return await this._applyToAllLists(this.closeDateInList, true, date, comment);
+    return await this._applyToAllLists(this.closeDateInList, date, comment);
   }
 
   /**
    * Apply a method to all lists on the board
    * @param {*} method Method to apply to each list
-   * @param {*} with_checklists Include checklists when retrieving cards
    * @param {*} date [Optional] Date to apply
    * @param {Array} args [Optional] Additional arguments
    */
-  async _applyToAllLists(method, with_checklists, date = null, ...args) {
+  async _applyToAllLists(method, date = null, ...args) {
     try {
-      let result = await this.client.getListsWithCards(this.boardId, with_checklists);
+      let result = await this.client.getListsWithCards(this.boardId);
       if (result.logIfError()) return result;
       method = method.bind(this);
       let promise_array = result.data.map(list => method(list, date, ...args));
@@ -75,8 +74,12 @@ class BoardManager {
     if (header_data.checklists && header_data.checklists.length > 0) {
       let checklist = header_data.checklists.find(x => x.name == date);
       if (checklist == null) return null; //There is no checklist with given name
+      //Get the cards with its checklists
+      let cards_result = await this.client.getCardsForList(list.id, true);
+      if (cards_result.logIfError()) return cards_result;
+      let cards = cards_result.data;
       //Close checkitem for each card
-      let promise_array = checklist.checkItems.map(check_item => this._closeCheckItem(list.cards, check_item.name, check_item.state, date));
+      let promise_array = checklist.checkItems.map(check_item => this._closeCheckItem(cards, check_item.name, check_item.state, date));
       //Add comment to header card
       let header_comment = BoardManagerUtils.processComment(checklist.checkItems, date, comment);
       promise_array.push(this.client.addCommentToCard(header_data.id, header_comment));

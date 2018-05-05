@@ -4,7 +4,7 @@ const querystring = require("querystring");
 const request_promise = require('request-promise-native');
 const rateLimit = require('rate-limit-promise')
 
-let limiter = rateLimit(95, 10000);//límite por token es de 100 cada 10s
+let limiter = rateLimit(95, 10000); //límite por token es de 100 cada 10s
 
 module.exports = class TrelloApiClient {
   /**
@@ -65,13 +65,15 @@ module.exports = class TrelloApiClient {
 
   /**
    * 
-   * @param {*} list_id 
+   * @param {string} list_id 
+   * @param {boolean} with_checklists
    * @returns {Promise<Result>}
    */
-  async getCardsForList(list_id) {
+  async getCardsForList(list_id, with_checklists = false) {
     let options = {
       cards: 'open',
-      fields: 'id,name'
+      fields: 'id,name',
+      checklists: with_checklists ? 'all' : 'none'
     };
     let res = await this._callTrello('GET', `/lists/${list_id}/cards`, options);
     return res;
@@ -82,12 +84,11 @@ module.exports = class TrelloApiClient {
    * @param {*} board_id 
    * @returns {Promise<Result>}
    */
-  async getListsWithCards(board_id, with_checklists = false) {
+  async getListsWithCards(board_id) {
     let options = {
       cards: 'open',
       fields: 'id,name',
-      card_fields: 'name,id',
-      checklists: with_checklists ? 'all' : 'none'
+      card_fields: 'name,id'
     };
     let res = await this._callTrello('GET', `/boards/${board_id}/lists`, options);
     return res;
@@ -213,7 +214,7 @@ module.exports = class TrelloApiClient {
     }
     // console.log('Making request with:' + JSON.stringify(options));
     return limiter().then(() =>
-      request_promise[method.toLowerCase()](options))
+        request_promise[method.toLowerCase()](options))
       .then(data => new Result(null, data))
       //TODO diferenciar si el error es de limiter o de request_promise
       .catch(err => new Result(err));
