@@ -77,9 +77,9 @@ class BoardManager {
       //Get the cards with its checklists
       let cards_result = await this.client.getCardsForList(list.id, true);
       if (cards_result.logIfError()) return cards_result;
-      let cards = cards_result.data;
+      list.cards = cards_result.data;
       //Close checkitem for each card
-      let promise_array = checklist.checkItems.map(check_item => this._closeCheckItem(cards, check_item.name, check_item.state, date));
+      let promise_array = checklist.checkItems.map(check_item => this._closeCheckItem(list, check_item.name, check_item.state, date));
       //Add comment to header card
       let header_comment = BoardManagerUtils.processComment(checklist.checkItems, date, comment);
       promise_array.push(this.client.addCommentToCard(header_data.id, header_comment));
@@ -91,10 +91,12 @@ class BoardManager {
   }
 
 
-  async _closeCheckItem(cards, card_name, check_item_state, date) {
-    let card = BoardManagerUtils.findCardByName(card_name, cards);
+  async _closeCheckItem(list, card_name, check_item_state, date) {
+    let card = BoardManagerUtils.findCardByName(card_name, list.cards);
     if (card == null) {
-      throw new Error('Method not implemented yet: ' + cards.length + JSON.stringify(card_name) + date);
+      let card_result = this.client.addCardToBoard(list.id, card_name);
+      if(card_result.logIfError()) return card_result;
+      card = card_result.data;
     }
     let checklist_result = await this._findOrCreateCheckList(card, this.default_checklist);
     if (checklist_result.logIfError()) return checklist_result;
@@ -138,7 +140,7 @@ class BoardManager {
       change_promise_array.push(promise);
     });
     changes.add.forEach(name => {
-      let promise = this.client.addChecklistItem(checklist.id, name, false);
+      let promise = this.client.addChecklistItem(checklist.id, name, false, 'top');
       change_promise_array.push(promise);
     });
     return await BoardManagerUtils.resultFromPromiseArray(change_promise_array);

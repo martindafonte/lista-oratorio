@@ -114,12 +114,13 @@ module.exports = class TrelloApiClient {
    * @param {string} checklist_id 
    * @param {string} item_name 
    * @param {boolean} checked 
+   * @param {string} position bottom or top
    * @returns {Promise<Result>}
    */
-  async addChecklistItem(checklist_id, item_name, checked) {
+  async addChecklistItem(checklist_id, item_name, checked, position = 'bottom') {
     let options = {
       name: item_name,
-      pos: 'bottom',
+      pos: position,
       checked: checked
     };
     let res = await this._callTrello('POST', `/checklists/${checklist_id}/checkItems`, options);
@@ -136,6 +137,21 @@ module.exports = class TrelloApiClient {
       text: comment,
     };
     return await this._callTrello('POST', `/cards/${card_id}/actions/comments`, options);
+  }
+
+  /**
+   * Add a new card to the given list
+   * @param {string} list_id id of the list where the card will be added
+   * @param {string} name Name of the card
+   * @returns {Promise<Result>}
+   */
+  async addCardToBoard(list_id, name){
+    let options = {
+      idList: list_id,
+      name: name,
+      pos: 'bottom'
+    }
+    return await this._callTrello('POST', `/cards`, options);
   }
 
   /**
