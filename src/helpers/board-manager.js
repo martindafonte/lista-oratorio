@@ -94,7 +94,7 @@ class BoardManager {
   async _closeCheckItem(list, card_name, check_item_state, date) {
     let card = BoardManagerUtils.findCardByName(card_name, list.cards);
     if (card == null) {
-      let card_result = this.client.addCardToBoard(list.id, card_name);
+      let card_result = await this.client.addCardToBoard(list.id, card_name);
       if(card_result.logIfError()) return card_result;
       card = card_result.data;
     }
@@ -102,7 +102,7 @@ class BoardManager {
     if (checklist_result.logIfError()) return checklist_result;
     let update_result = await this._updateOrCreateCheckItem(card.id, checklist_result.data, date, check_item_state == 'complete');
     if (update_result.logIfError()) return update_result;
-    let state = update_result.state == 'complete';
+    let state = update_result.data.state == 'complete';
     return new Result(null, state);
   }
 
