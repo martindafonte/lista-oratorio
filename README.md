@@ -18,7 +18,7 @@ board-manager.js contiene la lógica de manejo de un tablero
 - **models** Modelo de datos y acceso a la base de datos
 - **routes** Rutas servida por Express
 - **tests** Archivos de pruebas a ejecuta por mocha
-- **views** Vistas dinámicas servidas por el servidor de Express
+- **views** Vistas generadas con el framework Marko
 - **.env** Archivo que contiene variables de ambiente y secretos de la aplicación (no commitear)
 
 ## Welcome to the Glitch BETA

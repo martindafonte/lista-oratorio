@@ -1,3 +1,3 @@
 module.exports = (app) => {
-  app.get('/', require('./../pages/index/index'));
+  app.get('/', require('./../views/pages/index/index'));
 }
