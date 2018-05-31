@@ -1,7 +1,6 @@
-<!doctype html>
-<html>
-  <app-header/>
-  <body>
+<include('../../layouts/default/template.marko')>
+  <@title>Home</@title>
+  <@body>
     <header>
       <h1>Trello Lista Alpha</h1>
     </header>
@@ -25,8 +24,5 @@
         <button type="submit">Cerrar Lista</button>
       </form>
     </main>
-  </body>
-  <app-footer/>
-  <script src="https://code.jquery.com/jquery-2.2.1.min.js" integrity="sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00=" crossorigin="anonymous"/>
-  <script src="/js/client.js"/>
-</html>
+  </@body>
+</include>
