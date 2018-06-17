@@ -100,11 +100,11 @@ module.exports = class TrelloApiClient {
    * @param {*} checklist_name 
    * @returns {Promise<Result>}
    */
-  async addCheckList(card_id, checklist_name) {
+  async addCheckList(card_id, checklist_name, base_checklist_id) {
     let options = {
-      name: checklist_name,
-      pos: 'top'
+      name: checklist_name
     };
+    if (base_checklist_id) options.idChecklistSource = base_checklist_id;
     let res = await this._callTrello('POST', `/cards/${card_id}/checklists`, options);
     return res;
   }
@@ -145,7 +145,7 @@ module.exports = class TrelloApiClient {
    * @param {string} name Name of the card
    * @returns {Promise<Result>}
    */
-  async addCardToBoard(list_id, name){
+  async addCardToBoard(list_id, name) {
     let options = {
       idList: list_id,
       name: name,
@@ -230,7 +230,7 @@ module.exports = class TrelloApiClient {
     }
     // console.log('Making request with:' + JSON.stringify(options));
     return limiter().then(() =>
-        request_promise[method.toLowerCase()](options))
+      request_promise[method.toLowerCase()](options))
       .then(data => new Result(null, data))
       //TODO diferenciar si el error es de limiter o de request_promise
       .catch(err => new Result(err));

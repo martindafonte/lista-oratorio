@@ -95,7 +95,7 @@ class BoardManager {
     let card = BoardManagerUtils.findCardByName(card_name, list.cards);
     if (card == null) {
       let card_result = await this.client.addCardToBoard(list.id, card_name);
-      if(card_result.logIfError()) return card_result;
+      if (card_result.logIfError()) return card_result;
       card = card_result.data;
     }
     let checklist_result = await this._findOrCreateCheckList(card, this.default_checklist);
@@ -139,8 +139,8 @@ class BoardManager {
       let promise = this.client.removeChecklistItem(item.idChecklist, item.id)
       change_promise_array.push(promise);
     });
-    changes.add.forEach(name => {
-      let promise = this.client.addChecklistItem(checklist.id, name, false, 'top');
+    changes.add.forEach((name, i) => {
+      let promise = this.client.addChaecklistItem(checklist.id, name, false, i * 10/*posicion*/);
       change_promise_array.push(promise);
     });
     return await BoardManagerUtils.resultFromPromiseArray(change_promise_array);
@@ -154,17 +154,19 @@ class BoardManager {
   }
 
   /**
-   * Finds a checklist with the same name or create a new one
+   * Finds a checklist with the same name or create a new one based on the last one
    * @param {any} card Cards with its checklists
    * @param {string} checklist_name Checklist name
    */
   async _findOrCreateCheckList(card, checklist_name) {
+    let base_checklist_id;
     if (card.checklists && card.checklists.length > 0) {
       let key = checklist_name.toLowerCase();
       let checklist = card.checklists.find(x => x.name.toLowerCase() == key);
       if (checklist != null) return new Result(null, checklist);
+      base_checklist_id = card.checklists[card.checklists.length - 1].id;
     }
-    let check_result = await this.client.addCheckList(card.id, checklist_name);
+    let check_result =  await this.client.addCheckList(card.id, checklist_name, base_checklist_id);
     return check_result;
   }
 

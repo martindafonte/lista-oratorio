@@ -36,7 +36,7 @@ module.exports = class BoardManagerUtils {
    * @param {*} header_card 
    */
   static getCardNameList(list, header_card) {
-    return list.filter(x => x.id !== header_card.id).map(x => x.name);
+    return list.filter(x => x.id !== header_card.id).map(x => x.name).sort();
   }
 
   static findCardByName(name, cards) {
