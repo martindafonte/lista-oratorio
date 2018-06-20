@@ -17,6 +17,16 @@ class BoardManager {
   }
 
   /**
+   * Returns the lists name and id of the selected board
+   */
+  async getListsData() {
+    let list_result = await this.client.getLists(this.boardId);
+    if (list_result.logIfError()) return list_result;
+    list_result.data.map(x => { return { name: x.name, id: x.id } });
+    return list_result;
+  }
+
+  /**
    * Update all checklists of all lists
    */
   async updateAllLists() {
@@ -35,10 +45,11 @@ class BoardManager {
    * Close one checklis on the header cards of the board
    * @param {string} date name of the checklist to close
    * @param {string} comment comment to add to the header card
+   * @param {Array.<string>} listas id de las listas para las que se cierra una fecha
    * @returns {Promise<Result>}
    */
-  async closeDate(date, comment) {
-    return await this._applyToAllLists(this.closeDateInList, date, comment);
+  async closeDate(date, comment, listas = []) {
+    return await this._applyToAllLists(this.closeDateInList, date, comment, listas);
   }
 
   /**
@@ -66,8 +77,10 @@ class BoardManager {
    * Close one checklis on the header cards of the given list
    * @param {string} date name of the checklist to close
    * @param {any} list list with cards and its checklists
+   * @param {Array.<string>} listas id of the list to close
    */
-  async closeDateInList(list, date, comment) {
+  async closeDateInList(list, date, comment, listas = []) {
+    if (listas && listas.indexOf(list.id) >= 0) return null;
     let result = await this._getHeaderCardDetails(list.name, list.cards);
     if (result.logIfError() || result.data == null) return result;
     let header_data = result.data;
@@ -166,7 +179,7 @@ class BoardManager {
       if (checklist != null) return new Result(null, checklist);
       base_checklist_id = card.checklists[card.checklists.length - 1].id;
     }
-    let check_result =  await this.client.addCheckList(card.id, checklist_name, base_checklist_id);
+    let check_result = await this.client.addCheckList(card.id, checklist_name, base_checklist_id);
     return check_result;
   }
 

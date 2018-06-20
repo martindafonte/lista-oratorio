@@ -24,9 +24,9 @@ module.exports = class BoardManagerUtils {
   static async resultFromPromiseArray(promise_array) {
     promise_array = promise_array.filter(x => x != null && x != undefined);
     return Promise.all(promise_array).then(results => {
-        let error = results.find(x => x != null && typeof x.logIfError == "function" && x.logIfError());
-        return error || new Result(null);
-      })
+      let error = results.find(x => x != null && typeof x.logIfError == "function" && x.logIfError());
+      return error || new Result(null);
+    })
       .catch(err => new Result(err));
   }
 

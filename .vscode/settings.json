@@ -4,6 +4,7 @@
     "files.exclude": {
         "**/*.marko.js": true,
         "**/*.map": true,
-        ".glitch-assets":true
+        ".glitch-assets":true,
+        "node_modules":true
     }
 }

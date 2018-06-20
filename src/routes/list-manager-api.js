@@ -29,8 +29,14 @@ router.post('/close', (request, response) => {
         response.send('No se encontró un parámetro board_id en el pedido');
         return;
     }
+    let listas = [];
+    for (let prop in request.body) {
+        if (prop.startsWith("lista_")) {
+            listas.push(request.body[prop]);
+        }
+    }
     let manager = new BoardManager(user, request.body.board_id);
-    manager.closeDate(request.body.date, request.body.comment).then(
+    manager.closeDate(request.body.date, request.body.comment, listas).then(
         res => {
             if (res.error) response.status(500);
             response.send(res.error || 'Operación exitosa');
