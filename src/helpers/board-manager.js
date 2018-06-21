@@ -38,7 +38,7 @@ class BoardManager {
    * @param {string} date Name of the ckeclist to add to the header card
    */
   async addDateToLists(date) {
-    return await this._applyToAllLists(this._createOrUpdateDateInList, date);
+    return await this._applyToAllLists(this._createOrUpdateDateInList, [],date);
   }
 
   /**
@@ -49,21 +49,27 @@ class BoardManager {
    * @returns {Promise<Result>}
    */
   async closeDate(date, comment, listas = []) {
-    return await this._applyToAllLists(this.closeDateInList, date, comment, listas);
+    return await this._applyToAllLists(this.closeDateInList, listas, date, comment);
   }
 
   /**
    * Apply a method to all lists on the board
-   * @param {*} method Method to apply to each list
+   * @param {Function} method Method to apply to each list
+   * @param {Array} lists Array of lists id to apply method
    * @param {*} date [Optional] Date to apply
    * @param {Array} args [Optional] Additional arguments
    */
-  async _applyToAllLists(method, date = null, ...args) {
+  async _applyToAllLists(method, lists = [], date = null, ...args) {
     try {
       let result = await this.client.getListsWithCards(this.boardId);
       if (result.logIfError()) return result;
       method = method.bind(this);
-      let promise_array = result.data.map(list => method(list, date, ...args));
+      let promise_array = result.data.map(list => {
+        if (lists && lists.length > 0 && lists.indexOf(list.id) < 0)//Filtro por las listas
+          return null;
+        else
+          return method(list, date, ...args)
+      });
       return await BoardManagerUtils.resultFromPromiseArray(promise_array);
     } catch (err) {
       console.error(err);
@@ -79,8 +85,7 @@ class BoardManager {
    * @param {any} list list with cards and its checklists
    * @param {Array.<string>} listas id of the list to close
    */
-  async closeDateInList(list, date, comment, listas = []) {
-    if (listas && listas.indexOf(list.id) < 0) return null;//no está marcada la lista
+  async closeDateInList(list, date, comment) {
     let result = await this._getHeaderCardDetails(list.name, list.cards);
     if (result.logIfError() || result.data == null) return result;
     let header_data = result.data;
@@ -153,7 +158,7 @@ class BoardManager {
       change_promise_array.push(promise);
     });
     changes.add.forEach((name, i) => {
-      let promise = this.client.addChaecklistItem(checklist.id, name, false, i * 10/*posicion*/);
+      let promise = this.client.addChecklistItem(checklist.id, name, false, i * 10/*posicion*/);
       change_promise_array.push(promise);
     });
     return await BoardManagerUtils.resultFromPromiseArray(change_promise_array);
