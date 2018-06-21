@@ -80,7 +80,7 @@ class BoardManager {
    * @param {Array.<string>} listas id of the list to close
    */
   async closeDateInList(list, date, comment, listas = []) {
-    if (listas && listas.indexOf(list.id) >= 0) return null;
+    if (listas && listas.indexOf(list.id) < 0) return null;//no está marcada la lista
     let result = await this._getHeaderCardDetails(list.name, list.cards);
     if (result.logIfError() || result.data == null) return result;
     let header_data = result.data;
