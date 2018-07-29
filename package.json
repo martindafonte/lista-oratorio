@@ -37,6 +37,7 @@
     "express"
   ],
   "devDependencies": {
+    "@types/node": "^10.5.4",
     "mocha": "^5.1.1"
   }
 }
