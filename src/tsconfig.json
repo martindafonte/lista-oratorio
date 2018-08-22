@@ -1,0 +1,16 @@
+{
+    "compileOnSave": true,
+    "compilerOptions": {
+        "module": "CommonJS",
+        "outDir": "../build",
+        "allowJs": false,
+        "target": "es2015"
+    },
+    "include": [
+        "./**/*"
+    ],
+    "exclude": [
+        "../views/**/*",
+        "views/**/*"
+    ]
+}

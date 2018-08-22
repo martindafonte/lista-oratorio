@@ -1,8 +1,13 @@
-module.exports = class ApiCallResult {
-    constructor(error, data = null) {
+export class ApiCallResult {
+
+    ok: boolean;
+    error: any;
+    data: any;
+
+    constructor(error: any, data?: any) {
         this.ok = error == null;
         this.error = error;
-        this.data = data;
+        this.data = data || null;
     }
 
     /**
@@ -12,6 +17,4 @@ module.exports = class ApiCallResult {
         if (!this.ok) console.error(this.error);
         return !this.ok;
     }
-
-
 }

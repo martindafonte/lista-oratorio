@@ -1,5 +1,5 @@
 const assert = require('assert');
-const BoardManagerUtil = require('./../../src/helpers/board-manager-utils');
+const board_module = require('./../../build/helpers/board-manager-utils');
 
 
 describe('Board Manager', function () {
@@ -11,7 +11,7 @@ describe('Board Manager', function () {
     }, {
       name: 'tres', state: 'complete'
     }];
-    let comment = BoardManagerUtil.processComment(checkitems, '2018-04-12', 'Llovio');
+    let comment = board_module.BoardManagerUtils.processComment(checkitems, '2018-04-12', 'Llovio');
     let expected = '2018-04-12: Llovio\nCantidad: 2/3\nDetalle: uno, tres'
     assert.equal(comment, expected);
     done();

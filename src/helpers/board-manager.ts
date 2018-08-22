@@ -1,15 +1,22 @@
-const User = require('./../models/user');
-const TrelloApiClient = require('./trello-api-client');
-const Result = require('./api-call-result');
-const BoardManagerUtils = require('./board-manager-utils');
+// const User = require('./../models/user');
+import {TrelloApiClient} from './trello-api-client';
+import { ApiCallResult as Result } from './api-call-result';
+import { BoardManagerUtils } from './board-manager-utils';
+import { User } from './../models/user';
 
-class BoardManager {
+export class BoardManager {
+
+  user: User;
+  boardId: string;
+  private client: TrelloApiClient;
+  default_checklist: string;
+
   /**
    * Constructor de Board Manager
    * @param {User} user 
    * @param {string} board_id 
    */
-  constructor(user, board_id) {
+  constructor(user: User, board_id: string) {
     this.user = user;
     this.boardId = board_id;
     this.client = new TrelloApiClient(user);
@@ -37,8 +44,8 @@ class BoardManager {
    * Adds or updates a checklist to the header card of each list
    * @param {string} date Name of the ckeclist to add to the header card
    */
-  async addDateToLists(date) {
-    return await this._applyToAllLists(this._createOrUpdateDateInList, [],date);
+  async addDateToLists(date: string) {
+    return await this._applyToAllLists(this._createOrUpdateDateInList, [], date);
   }
 
   /**
@@ -48,7 +55,7 @@ class BoardManager {
    * @param {Array.<string>} listas id de las listas para las que se cierra una fecha
    * @returns {Promise<Result>}
    */
-  async closeDate(date, comment, listas = []) {
+  async closeDate(date: string, comment: string, listas: Array<string> = []): Promise<Result> {
     return await this._applyToAllLists(this.closeDateInList, listas, date, comment);
   }
 
@@ -59,7 +66,7 @@ class BoardManager {
    * @param {*} date [Optional] Date to apply
    * @param {Array} args [Optional] Additional arguments
    */
-  async _applyToAllLists(method, lists = [], date = null, ...args) {
+  async _applyToAllLists(method: Function, lists: Array<any> = [], date: any = null, ...args: Array<any>) {
     try {
       let result = await this.client.getListsWithCards(this.boardId);
       if (result.logIfError()) return result;
@@ -85,7 +92,7 @@ class BoardManager {
    * @param {any} list list with cards and its checklists
    * @param {Array.<string>} listas id of the list to close
    */
-  async closeDateInList(list, date, comment) {
+  async closeDateInList(list: any, date: string, comment) {
     let result = await this._getHeaderCardDetails(list.name, list.cards);
     if (result.logIfError() || result.data == null) return result;
     let header_data = result.data;
@@ -176,7 +183,7 @@ class BoardManager {
    * @param {any} card Cards with its checklists
    * @param {string} checklist_name Checklist name
    */
-  async _findOrCreateCheckList(card, checklist_name) {
+  async _findOrCreateCheckList(card: any, checklist_name: string) {
     let base_checklist_id;
     if (card.checklists && card.checklists.length > 0) {
       let key = checklist_name.toLowerCase();
@@ -195,7 +202,7 @@ class BoardManager {
    * @param {string} item_name 
    * @param {boolean} state 
    */
-  async _updateOrCreateCheckItem(card_id, checklist, item_name, state) {
+  async _updateOrCreateCheckItem(card_id: string, checklist: any, item_name: string, state: boolean) {
     let key = item_name.toLowerCase();
     let check_item = checklist.checkItems.find(x => x.name.toLowerCase() == key);
     if (check_item == null) {

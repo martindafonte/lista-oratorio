@@ -1,14 +1,18 @@
-const db = require('./database');
-const BaseModel = require('./base-model');
+import db = require('./database');
+import {BaseModel} from './base-model';
 
-module.exports = class WebHook extends BaseModel {
+export class WebHook extends BaseModel {
+  api_key: string;
+  token: string;
+  user_id: string;
+
   /**
  * Constructor of class WebHook
  * @param {string} api_key 
  * @param {string} token 
  * @param {string} user_id 
  */
-  constructor(api_key, token, user_id) {
+  constructor(api_key: string, token: string, user_id: string) {
     super();
     this.api_key = api_key;
     this.token = token;
@@ -25,7 +29,7 @@ module.exports = class WebHook extends BaseModel {
   }
 
   static findWebHook(id, callback) {
-    db.webhooks.findOne({ _id: id }, (err, data) => {
+    db.webhooks.findOne({ _id: id }, (err, data: WebHook) => {
       if (err || data == null) {
         callback(err || `Webhook ${id} couldn't be found`);
       } else {

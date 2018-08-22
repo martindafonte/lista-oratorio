@@ -1,8 +1,8 @@
-const index_page = require('./../views/pages/index/index');
-const User = require('./../models/user');
-const BoardManager = require('./../helpers/board-manager');
+import index_page = require('./../../views/pages/index/index');
+import { User } from './../models/user';
+import { BoardManager } from './../helpers/board-manager';
 
-module.exports = (app) => {
+export = (app) => {
   app.get('/', (req, res) => {
     let token = process.env.TRELLO_TOKEN;
     let user = new User('me', process.env.TRELLO_APIKEY, token);

@@ -1,15 +1,18 @@
-const Nedb = require('nedb');
+import Nedb = require('nedb');
 
-module.exports = class BaseModel {
+export class BaseModel {
+
+  _id: string;
+
   constructor() {
     this._id = null;
   }
   /**
    *
    * @param {Nedb} model
-   * @param {*} callback
+   * @param {Function} callback
    */
-  saveOrUpdate(model, callback) {
+  saveOrUpdate(model: Nedb, callback: Function) {
     if (this._id == null) {
       model.insert(this._getData(), (err, doc) =>
       // @ts-ignore

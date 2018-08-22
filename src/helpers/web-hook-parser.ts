@@ -1,9 +1,9 @@
-const trello_action_type = require('get-trello-action-type');
+import trello_action_type = require('get-trello-action-type');
 
 /**
  * Enum of possible actions to perform
  */
-const ACTIONS = module.exports.ACTIONS = {
+export const ACTIONS = {
   NONE: 0,
   ADD_ITEM: 1,
   REMOVE_ITEM: 2,
@@ -13,14 +13,12 @@ const ACTIONS = module.exports.ACTIONS = {
 Object.freeze(ACTIONS);
 
 
-module.exports.getWebHookAction = getWebHookAction;
-
 /**
  * Finds if a web hook must be processed and returns the corresponding action
  * @param {*} data webhook json data
  * @returns {any} ACTIONS
  */
-function getWebHookAction(data) {
+export function getWebHookAction(data: any): any {
   try {
     let type = trello_action_type.getTrelloActionType(data);
     trello_action_type.trelloActionTypes

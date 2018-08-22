@@ -1,7 +1,7 @@
-const web_hook_parser = require('./../helpers/web-hook-parser');
-const BoardManger = require('./../helpers/board-manager');
-const User = require('./../models/user');
-const express = require('express');
+import {getWebHookAction, ACTIONS} from './../helpers/web-hook-parser';
+import {BoardManager} from './../helpers/board-manager';
+import { User } from './../models/user';
+import express = require('express');
 const router = express.Router();
 
 
@@ -32,10 +32,10 @@ router.post("/:id", (request, response) => {
   let token = process.env.TRELLO_TOKEN;
   let user = new User('me', process.env.TRELLO_APIKEY, token);
   let action_data = request.body.action;
-  let hook_action = web_hook_parser.getWebHookAction(action_data);
-  if (hook_action !== web_hook_parser.ACTIONS.NONE) {
+  let hook_action = getWebHookAction(action_data);
+  if (hook_action !== ACTIONS.NONE) {
     let data = _getActionData(hook_action, action_data);
-    let board_manager = new BoardManger(user, data.board_id);
+    let board_manager = new BoardManager(user, data.board_id);
     board_manager.updateAllLists();
   }
   response.sendStatus(200)
@@ -48,26 +48,26 @@ router.post("/:id", (request, response) => {
  * @param {any} hook_action 
  * @param {any} action_data 
  */
-function _getActionData(hook_action, action_data) {
+function _getActionData(hook_action: any, action_data: any) {
   switch (hook_action) {
-    case web_hook_parser.ACTIONS.ADD_ITEM:
+    case ACTIONS.ADD_ITEM:
       return {
         list: action_data.data.list.id,
         board_id: action_data.data.board.id
       };
-    case web_hook_parser.ACTIONS.REMOVE_ITEM:
+    case ACTIONS.REMOVE_ITEM:
       return {
         list: action_data.data.list.id,
         board_id: action_data.data.board.id
       };
-    case web_hook_parser.ACTIONS.MOVE_ITEM:
+    case ACTIONS.MOVE_ITEM:
       return {
         old: action_data.data.listBefore.id,
         new: action_data.data.listAfter.id,
         list: action_data.data.listAfter.id,
         board_id: action_data.data.board.id
       };
-    case web_hook_parser.ACTIONS.RENAME_ITEM:
+    case ACTIONS.RENAME_ITEM:
       return {
         old: action_data.data.old.name,
         new: action_data.data.card.name,
@@ -79,4 +79,4 @@ function _getActionData(hook_action, action_data) {
   }
 }
 
-module.exports = router;
+export = router;

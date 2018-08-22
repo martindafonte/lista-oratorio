@@ -1,17 +1,20 @@
-const User = require('./../models/user');
-const Result = require('./api-call-result');
-const querystring = require("querystring");
-const request_promise = require('request-promise-native');
-const rateLimit = require('rate-limit-promise')
+import { User } from './../models/user';
+import { ApiCallResult as Result } from './api-call-result';
+import querystring = require("querystring");
+import request_promise = require('request-promise-native');
+import rateLimit = require('rate-limit-promise')
 
 let limiter = rateLimit(95, 10000); //límite por token es de 100 cada 10s
 
-module.exports = class TrelloApiClient {
+export class TrelloApiClient {
+
+  user: User;
+
   /**
    * 
    * @param {User} user 
    */
-  constructor(user) {
+  constructor(user: User) {
     this.user = user;
     if (!this._authenticateUser(this.user)) {
       //TODO: Tirrar error y salir
@@ -24,7 +27,7 @@ module.exports = class TrelloApiClient {
    * @param {string} board_id id of the board
    * @returns {Promise<Result>}
    */
-  async getLists(board_id) {
+  async getLists(board_id: string): Promise<Result> {
     let res = await this._callTrello('GET', `/boards/${board_id}/lists`, {
       filter: 'open'
     });
@@ -36,7 +39,7 @@ module.exports = class TrelloApiClient {
    * @param {string} board_id id of the board
    * @returns {Promise<Result>}
    */
-  async getAllCards(board_id) {
+  async getAllCards(board_id: string): Promise<Result> {
     let options = {
       cards: 'visible',
       card_fields: 'name,id,idList',
@@ -53,7 +56,7 @@ module.exports = class TrelloApiClient {
    * @param {*} card_id 
    * @returns {Promise<Result>}
    */
-  async getCardDetails(card_id) {
+  async getCardDetails(card_id: any): Promise<Result> {
     let options = {
       fields: 'id,name,idChecklists',
       checklists: 'all',
@@ -69,7 +72,7 @@ module.exports = class TrelloApiClient {
    * @param {boolean} with_checklists
    * @returns {Promise<Result>}
    */
-  async getCardsForList(list_id, with_checklists = false) {
+  async getCardsForList(list_id: string, with_checklists: boolean = false): Promise<Result> {
     let options = {
       cards: 'open',
       fields: 'id,name',
@@ -84,7 +87,7 @@ module.exports = class TrelloApiClient {
    * @param {*} board_id 
    * @returns {Promise<Result>}
    */
-  async getListsWithCards(board_id) {
+  async getListsWithCards(board_id: any): Promise<Result> {
     let options = {
       cards: 'open',
       fields: 'id,name',
@@ -100,11 +103,11 @@ module.exports = class TrelloApiClient {
    * @param {*} checklist_name 
    * @returns {Promise<Result>}
    */
-  async addCheckList(card_id, checklist_name, base_checklist_id) {
+  async addCheckList(card_id: any, checklist_name: any, base_checklist_id): Promise<Result> {
     let options = {
-      name: checklist_name
+      name: checklist_name,
+      idChecklistSource: base_checklist_id || null
     };
-    if (base_checklist_id) options.idChecklistSource = base_checklist_id;
     let res = await this._callTrello('POST', `/cards/${card_id}/checklists`, options);
     return res;
   }
@@ -117,7 +120,7 @@ module.exports = class TrelloApiClient {
    * @param {string} position bottom or top
    * @returns {Promise<Result>}
    */
-  async addChecklistItem(checklist_id, item_name, checked, position = 'bottom') {
+  async addChecklistItem(checklist_id: string, item_name: string, checked: boolean, position: string|number = 'bottom'): Promise<Result> {
     let options = {
       name: item_name,
       pos: position,
@@ -132,7 +135,7 @@ module.exports = class TrelloApiClient {
    * @param {string} card_id 
    * @param {string} comment 
    */
-  async addCommentToCard(card_id, comment) {
+  async addCommentToCard(card_id: string, comment: string) {
     let options = {
       text: comment,
     };
@@ -145,7 +148,7 @@ module.exports = class TrelloApiClient {
    * @param {string} name Name of the card
    * @returns {Promise<Result>}
    */
-  async addCardToBoard(list_id, name) {
+  async addCardToBoard(list_id: string, name: string): Promise<Result> {
     let options = {
       idList: list_id,
       name: name,
@@ -160,7 +163,7 @@ module.exports = class TrelloApiClient {
    * @param {string} checkitem_id 
    * @param {boolean} checked 
    */
-  async updateChecklistItem(card_id, checkitem_id, checked) {
+  async updateChecklistItem(card_id: string, checkitem_id: string, checked: boolean) {
     let options = {
       state: checked ? 'complete' : 'incomplete'
     };
@@ -173,7 +176,7 @@ module.exports = class TrelloApiClient {
    * @param {*} item_id 
    * @returns {Promise<Result>}
    */
-  async removeChecklistItem(checklist_id, item_id) {
+  async removeChecklistItem(checklist_id: any, item_id: any): Promise<Result> {
     return await this._callTrello('DELETE', `/checklists/${checklist_id}/checkItems/${item_id}`);
   }
 
@@ -182,7 +185,7 @@ module.exports = class TrelloApiClient {
    * @param {*} checklist_id 
    * @returns {Promise<Result>}
    */
-  async removeChecklist(checklist_id) {
+  async removeChecklist(checklist_id: any): Promise<Result> {
     return await this._callTrello('DELETE', `/checklists/${checklist_id}`);
   }
 
@@ -201,7 +204,7 @@ module.exports = class TrelloApiClient {
    * @returns {Promise<Result>}
    * @throws Exceptions when a call failed on the API
    */
-  _callTrello(method, uri, args = null) {
+  _callTrello(method: string, uri: string, args: any = null): Promise<Result> {
     let host = "https://api.trello.com/1";
     args = args || {};
     var url = host + (uri[0] === "/" ? "" : "/") + uri;
@@ -212,7 +215,7 @@ module.exports = class TrelloApiClient {
     var options = {
       url: url,
       method: method
-    };
+    } as any;
     //for methods other than GET
     if (args.attachment) {
       options.formData = {
@@ -240,7 +243,7 @@ module.exports = class TrelloApiClient {
    * 
    * @param {*} args 
    */
-  _addAuthArgs(args) {
+  _addAuthArgs(args: any) {
     args.key = this.user.api_key;
     if (this.user.token) {
       args.token = this.user.token;

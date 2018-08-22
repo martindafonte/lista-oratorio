@@ -1,6 +1,6 @@
-const Result = require('./api-call-result');
+import { ApiCallResult as Result } from './api-call-result';
 
-module.exports = class BoardManagerUtils {
+export class BoardManagerUtils {
   /**
    * Generates a new resume comment from the given parameters
    * @param {*} check_items 
@@ -8,7 +8,7 @@ module.exports = class BoardManagerUtils {
    * @param {string} comment 
    * @returns {string} formatted comment
    */
-  static processComment(check_items, date, comment) {
+  static processComment(check_items: any, date: string, comment: string): string {
     let completed_items = check_items.filter(x => x.state == 'complete');
     let total = check_items.length;
     let cantidad = completed_items.length;
@@ -21,7 +21,7 @@ module.exports = class BoardManagerUtils {
    * @param {Array.<Promise>} promise_array 
    * @returns {Promise<Result>}
    */
-  static async resultFromPromiseArray(promise_array) {
+  static async resultFromPromiseArray(promise_array: Array<Promise<any>>): Promise<Result> {
     promise_array = promise_array.filter(x => x != null && x != undefined);
     return Promise.all(promise_array).then(results => {
       let error = results.find(x => x != null && typeof x.logIfError == "function" && x.logIfError());
@@ -35,7 +35,7 @@ module.exports = class BoardManagerUtils {
    * @param {*} list 
    * @param {*} header_card 
    */
-  static getCardNameList(list, header_card) {
+  static getCardNameList(list: any, header_card: any) {
     return list.filter(x => x.id !== header_card.id).map(x => x.name).sort();
   }
 
@@ -51,11 +51,11 @@ module.exports = class BoardManagerUtils {
   }
 
   static findDifferences(original_array, new_array) {
-    let ret = {};
-    //Remove all items not found on the new array
-    ret.remove = original_array.filter(x => !new_array.find(y => y == x));
-    //Add all items not existing on the new array
-    ret.add = new_array.filter(x => !original_array.find(y => y == x));
-    return ret;
+    return {
+      //Remove all items not found on the new array
+      remove: original_array.filter(x => !new_array.find(y => y == x)),
+      //Add all items not existing on the new array
+      add: new_array.filter(x => !original_array.find(y => y == x))
+    };
   }
 }

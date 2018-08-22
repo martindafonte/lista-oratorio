@@ -1,16 +1,18 @@
 // server.js
 // where your node app starts
 
-require('dotenv').config(); //Load dot env variables
+import dotenv = require('dotenv');
+dotenv.config(); //Load dot env variables
 
-require('marko/node-require');//Allow Node.js to load .marko files
+import 'marko/node-require';//Allow Node.js to load .marko files
 
-const express = require('express');
-const bodyParser = require('body-parser');
-const compression = require('compression');
-const rp = require('request-promise-native');
-const morgan = require('morgan');
-const marko_express = require('marko/express');
+import express = require('express');
+import bodyParser = require('body-parser');
+import compression = require('compression');
+import rp = require('request-promise-native');
+import morgan = require('morgan');
+import marko_express = require('marko/express');
+import { AddressInfo } from 'net';
 
 const app = express();
 
@@ -55,7 +57,7 @@ app.use(function (req, res) {
 
 // listen for requests :)
 const listener = app.listen(process.env.PORT || 3000, () => {
-  console.log(`Your app is listening on port ${listener.address().port}`)
+  console.log(`Your app is listening on port ${(listener.address() as AddressInfo).port}`)
 })
 
 

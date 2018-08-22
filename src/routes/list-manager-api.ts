@@ -1,6 +1,6 @@
-const express = require('express');
-const User = require('./../models/user');
-const BoardManager = require('./../helpers/board-manager');
+import express = require('express');
+import { User } from './../models/user';
+import { BoardManager } from './../helpers/board-manager';
 const router = express.Router();
 
 
@@ -31,7 +31,7 @@ router.post('/close', (request, response) => {
     }
     let listas = [];
     for (let prop in request.body) {
-        if (prop.startsWith("lista_")) {
+        if (prop.indexOf("lista_") == 0) {
             listas.push(request.body[prop]);
         }
     }
@@ -45,4 +45,4 @@ router.post('/close', (request, response) => {
 }
 )
 
-module.exports = router;
+export = router;
