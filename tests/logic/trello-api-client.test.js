@@ -1,7 +1,7 @@
 require('dotenv').config()
 const assert = require('assert');
-const api_client_module = require('./../../build/helpers/trello-api-client');
-const user_module = require('./../../build/models/user');
+const api_client_module = require('./../../dist/src/helpers/trello-api-client');
+const user_module = require('./../../dist/src/models/user');
 
 describe('Trello Api Client', function () {
   var user = new user_module.User('me', process.env.TRELLO_APIKEY, process.env.TRELLO_TOKEN);
