@@ -1,10 +1,20 @@
 {
     "compilerOptions": {
-        "outDir": "./built",
-        "allowJs": true,
-        "target": "es6"
+        "module": "commonjs",
+        "target": "es6",
+        "noImplicitAny": false,
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "outDir": "dist/src",
+        "baseUrl": ".",
+        "paths": {
+            "*": [
+                "node_modules/*",
+                "src/types/*"
+            ]
+        }
     },
     "include": [
-        "./src/**/*"
+        "src/**/*"
     ]
 }

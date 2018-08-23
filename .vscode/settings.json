@@ -6,5 +6,15 @@
         "**/*.map": true,
         ".glitch-assets":true,
         "node_modules":true
-    }
+    },
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/bower_components": true,
+        "**/dist": true,
+        "**/coverge": true
+    },
+    "typescript.referencesCodeLens.enabled": true,
+    // "tslint.ignoreDefinitionFiles": false,
+    // "tslint.autoFixOnSave": true,
+    // "tslint.exclude": "**/node_modules/**/*"
 }

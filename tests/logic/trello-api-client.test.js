@@ -1,19 +1,19 @@
 require('dotenv').config()
 const assert = require('assert');
-const TrelloApiClient = require('./../../src/helpers/trello-api-client');
-const User = require('./../../src/models/user');
+const api_client_module = require('./../../dist/src/helpers/trello-api-client');
+const user_module = require('./../../dist/src/models/user');
 
 describe('Trello Api Client', function () {
-  var user = new User('me', process.env.TRELLO_APIKEY, process.env.TRELLO_TOKEN);
+  var user = new user_module.User('me', process.env.TRELLO_APIKEY, process.env.TRELLO_TOKEN);
   var board_id = process.env.TRELLO_TEST_BOARD_ID;
-  var client = new TrelloApiClient(user);
+  var client = new api_client_module.TrelloApiClient(user);
 
   it('Gets a List', function (done) {
     let result = client.getLists(board_id);
     result.then((x) => {
       assert.notEqual(x, undefined, 'Resultado no puede ser undefined');
       assert.notEqual(x, null, 'Resultado no puede ser null');
-      assert.notEqual(x.ok, false, 'Resultado no puede ser falso');
+      assert.notEqual(x.ok, false, 'Resultado no puede ser falso' + x.err);
       assert.notEqual(x.data.length, 0, 'No se recuperó ninguna lista');
       done();
     }).catch(err => {
@@ -26,7 +26,7 @@ describe('Trello Api Client', function () {
       .then((res) => {
         assert.notEqual(res, undefined, 'Resultado no puede ser undefined');
         assert.notEqual(res, null, 'Resultado no puede ser null');
-        assert.notEqual(res.ok, false, 'Resultado no puede ser falso');
+        assert.notEqual(res.ok, false, 'Resultado no puede ser falso' + res.err);
         assert.notEqual(res.data.length, 0, 'No se recuperó ninguna lista');
         done();
       }).catch(err =>
@@ -39,7 +39,7 @@ describe('Trello Api Client', function () {
       .then((x) => {
         assert.notEqual(x, undefined, 'Resultado no puede ser undefined');
         assert.notEqual(x, null, 'Resultado no puede ser null');
-        assert.notEqual(x.ok, false, 'Resultado no puede ser falso');
+        assert.notEqual(x.ok, false, 'Resultado no puede ser falso' + x.err);
         assert.notEqual(x.data.length, 0, 'No se recuperó ninguna lista');
         done();
       }).catch(err =>
@@ -52,7 +52,7 @@ describe('Trello Api Client', function () {
       .then(x => {
         assert.notEqual(x, null, 'Resultado no puede ser nulo');
         assert.notEqual(x, undefined, 'Resultado no puede ser undefined');
-        assert.notEqual(x.ok, false, 'Resultado no puede ser falso');
+        assert.notEqual(x.ok, false, 'Resultado no puede ser falso' + x.err);
         assert.notEqual(x.data.length, 0, 'Debe haber al menos un resultado');
         return client.getCardsForList(x.data[0].id);
       })
