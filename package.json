@@ -10,18 +10,17 @@
   "license": "Propietaria",
   "scripts": {
     "start": "npm run serve",
+    "serve": "ts-node --inspect=5858 src/app.ts",
+    "dev": "nodemon",
     "build": "npm run build-ts && npm run copy-static-assets",
-    "serve": "node dist/src/app.js",
-    "watch-node": "nodemon dist/src/app.js",
-    "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run watch-node\"",
-    "test": "mocha \"./{,!(node_modules)/**/}*.test.js\"",
     "build-ts": "tsc",
-    "watch-ts": "tsc -w",
-    "tslint": "tslint -c tslint.json -p tsconfig.json",
     "copy-static-assets": "ts-node copyStaticAssets.ts",
+    "test": "mocha \"./{,!(node_modules)/**/}*.test.js\"",
+    "tslint": "tslint -c tslint.json -p tsconfig.json",
     "debug": "npm run build && npm run watch-debug",
-    "serve-debug": "nodemon --inspect dist/src/app.js",
-    "watch-debug": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run serve-debug\""
+    "watch-ts": "tsc -w",
+    "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run dev\"",
+    "watch-debug": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run serve\""
   },
   "dependencies": {
     "body-parser": "^1.18.2",
@@ -50,21 +49,21 @@
     "node"
   ],
   "devDependencies": {
-    "@types/node": "^10.5.4",
     "@types/body-parser": "^1.17.0",
     "@types/compression": "0.0.36",
     "@types/dotenv": "^4.0.3",
     "@types/express": "^4.16.0",
     "@types/morgan": "^1.7.35",
     "@types/nedb": "^1.8.5",
-    "@types/shelljs": "^0.7.8",
+    "@types/node": "^10.5.4",
     "@types/request-promise-native": "^1.0.15",
-    "mocha": "^5.1.1",
-    "shelljs": "^0.8.1",
+    "@types/shelljs": "^0.7.8",
     "concurrently": "^3.5.1",
-    "typescript": "^2.7.2",
-    "ts-node": "^5.0.0",
+    "mocha": "^5.1.1",
+    "nodemon": "^1.18.4",
+    "shelljs": "^0.8.1",
+    "ts-node": "^5.0.1",
     "tslint": "^5.9.1",
-    "nodemon": "^1.13.0"
+    "typescript": "^2.7.2"
   }
 }

@@ -15,6 +15,14 @@
         }
     },
     "include": [
-        "src/**/*"
+        "src/**/*.ts"
+    ],
+    "exclude": [
+        ".data/**/*",
+        "dist/**/*",
+        ".git",
+        "node_modules",
+        "**/*.spec.ts",
+        "**/*.test.ts"
     ]
 }

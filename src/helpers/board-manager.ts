@@ -215,6 +215,3 @@ export class BoardManager {
     }
   }
 }
-
-
-module.exports = BoardManager;

@@ -244,5 +244,4 @@ class BoardManager {
     }
 }
 exports.BoardManager = BoardManager;
-module.exports = BoardManager;
 //# sourceMappingURL=board-manager.js.map

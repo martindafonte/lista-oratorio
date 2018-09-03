@@ -7,15 +7,14 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Iniciar servidor",
-      "program": "${workspaceFolder}\\src\\app.js"
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "envFile": "${workspaceFolder}/.env" ,
-      "name": "Test File",
-      "program": "${file}"
+      "name": "Launch via NPM",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "debug",
+        "--inspect=5858"
+      ],
+      "protocol": "inspector"
     }
   ]
 }
