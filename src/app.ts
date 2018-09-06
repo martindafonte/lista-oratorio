@@ -13,7 +13,7 @@ import rp = require('request-promise-native');
 import morgan = require('morgan');
 import marko_express = require('marko/express');
 import { AddressInfo } from 'net';
-
+import { registerPages } from './routes/pages';
 const app = express();
 
 
@@ -34,7 +34,7 @@ app.use(bodyParser.json());
 app.use(express.static('public'))
 
 //Configure default pages and views
-require('./routes/pages')(app);
+registerPages(app);
 
 //Add WebHooks to route
 app.use('/api/webhook', require('./routes/web-hooks'));

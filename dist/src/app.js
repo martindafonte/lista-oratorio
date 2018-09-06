@@ -11,6 +11,7 @@ const compression = require("compression");
 const rp = require("request-promise-native");
 const morgan = require("morgan");
 const marko_express = require("marko/express");
+const pages_1 = require("./routes/pages");
 const app = express();
 // compress our client side content before sending it over the wire
 app.use(compression());
@@ -24,7 +25,7 @@ app.use(bodyParser.json());
 //Serves all files in public folder
 app.use(express.static('public'));
 //Configure default pages and views
-require('./routes/pages')(app);
+pages_1.registerPages(app);
 //Add WebHooks to route
 app.use('/api/webhook', require('./routes/web-hooks'));
 //Add list manager api
