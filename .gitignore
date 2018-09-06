@@ -62,3 +62,6 @@ typings/
 # data files
 .data/*
 built/
+
+# map from typescript to js
+*.js.map
