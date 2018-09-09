@@ -7,14 +7,17 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Launch via NPM",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": [
-        "run",
-        "debug",
-        "--inspect=5858"
+      "name": "Lunch ts",
+      "protocol": "inspector",
+      "args": [
+        "src/app.ts"
       ],
-      "protocol": "inspector"
+      "cwd": "${workspaceRoot}",
+      "runtimeArgs": [
+        "-r",
+        "ts-node/register"
+      ],
+      "internalConsoleOptions": "openOnSessionStart"
     }
   ]
 }
