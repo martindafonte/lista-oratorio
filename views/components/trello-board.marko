@@ -1,0 +1,23 @@
+class {
+      onCreate() {
+        this.state = {
+            count:0
+        };
+    }
+    increment() {
+        this.state.count++;
+    }
+    navegarTablero() {
+        alert(`Hi!` + this.input.board_id);
+        console.log( 'hi');
+    }
+}
+
+<h2>The current count is ${state.count}</h2>
+<button on-click('increment')>+1</button>
+<div on-click('navegarTablero')>Hola soy un texto</div>
+<div on-click('navegarTablero')>
+  <blockquote class="trello-board-compact">
+    <a href="${input.board_id}">Trello Board</a>
+  </blockquote>
+</div>

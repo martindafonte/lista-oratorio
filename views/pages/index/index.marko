@@ -6,6 +6,7 @@
     </header>
     <main>
       <p>Crear una nueva lista en el tablero</p>
+      <trello-board board_id='https://trello.com/b/'+input.board_id />
       <form action="/api/lists/" method="POST">
         Nuevo Checklist:
         <input type="text" name="date" maxlength="50" placeholder="21-Apr-2018"/>
