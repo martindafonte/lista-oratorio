@@ -1,6 +1,6 @@
 const fs = require('fs');
 const assert = require('assert');
-const web_hook_parser = require('./../../dist/src/helpers/web-hook-parser');
+const web_hook_parser = require('./../../dist/helpers/web-hook-parser');
 
 describe('Web Hook Parser', function () {
   it('Clasificar web hooks', function (done) {

@@ -1,5 +1,5 @@
 const assert = require('assert');
-const webhook_module = require('./../../dist/src/models/webhook');
+const webhook_module = require('./../../dist/models/webhook');
 describe('webhook model', function () {
   it('should save a web hook', function (done) {
     var webhook = new webhook_module.WebHook('api_key', 'token', '123');

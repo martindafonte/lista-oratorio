@@ -1,5 +1,5 @@
 const assert = require('assert');
-const board_module = require('./../../dist/src/helpers/board-manager-utils');
+const board_module = require('./../../dist/helpers/board-manager-utils');
 
 
 describe('Board Manager', function () {
