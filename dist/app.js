@@ -13,6 +13,18 @@ const morgan = require("morgan");
 const marko_express = require("marko/express");
 const pages_1 = require("./routes/pages");
 const app = express();
+var isProduction = process.env.NODE_ENV === 'production';
+// Configure lasso to control how JS/CSS/etc. is delivered to the browser
+require('lasso').configure({
+    plugins: [
+        'lasso-marko' // Allow Marko templates to be compiled and transported to the browser
+    ],
+    outputDir: __dirname + '/../public',
+    bundlingEnabled: isProduction,
+    minify: isProduction,
+    fingerprintsEnabled: isProduction,
+});
+app.use(require('lasso/middleware').serveStatic());
 // compress our client side content before sending it over the wire
 app.use(compression());
 app.use(morgan('dev'));
