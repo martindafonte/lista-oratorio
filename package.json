@@ -23,12 +23,15 @@
     "watch-debug": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run serve\""
   },
   "dependencies": {
+    "@lasso/marko-taglib": "^1.0.12",
     "@types/marko": "^4.6.0",
     "body-parser": "^1.18.3",
     "compression": "^1.7.3",
     "dotenv": "^6",
     "express": "^4.16.3",
     "get-trello-action-type": "0.0.2",
+    "lasso": "^3.2.6",
+    "lasso-marko": "^2.4.4",
     "marko": "^4.13.4",
     "morgan": "^1.9.0",
     "nedb": "^1.8.0",

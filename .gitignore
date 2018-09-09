@@ -65,3 +65,7 @@ built/
 
 # map from typescript to js
 *.js.map
+
+#lasso
+.cache/*
+public/default/*
