@@ -14,22 +14,22 @@ class User extends base_model_1.BaseModel {
         this.username = username;
         this.api_key = api_key;
         this.token = token;
-        this._id = null;
-        this.boards_array = null;
+        this._id = undefined;
+        this.boards_array = undefined;
     }
     saveUser(callback) {
         this.saveOrUpdate(db.users, callback);
     }
     getConfiguredBoards(callback) {
         try {
-            if (this.boards_array != null) {
-                callback(null, this.boards_array);
+            if (this.boards_array != undefined) {
+                callback(undefined, this.boards_array);
             }
             else {
-                let query = this._id != null ? { _id: this._id } : { username: this.username };
+                const query = this._id != undefined ? { _id: this._id } : { username: this.username };
                 db.users.findOne(query, (err, data) => {
                     if (err) {
-                        callback(err, null);
+                        callback(err, undefined);
                         return;
                     }
                     this.boards_array = data.boards_array;
@@ -38,7 +38,7 @@ class User extends base_model_1.BaseModel {
             }
         }
         catch (err) {
-            callback(err, null);
+            callback(err, undefined);
         }
     }
     setConfiguredBoard(board) {
@@ -47,7 +47,7 @@ class User extends base_model_1.BaseModel {
         this.boards_array.push(board);
     }
     _getData() {
-        let data = { username: this.username, api_key: this.api_key, token: this.token, boards_array: null };
+        const data = { username: this.username, api_key: this.api_key, token: this.token, boards_array: undefined };
         if (this.boards_array)
             data.boards_array = this.boards_array;
         return data;
@@ -58,7 +58,7 @@ class User extends base_model_1.BaseModel {
                 callback(err);
             }
             else {
-                let user = new User(data.username, data.api_key, data.token);
+                const user = new User(data.username, data.api_key, data.token);
                 user._id = data._id;
                 callback(err, user);
             }

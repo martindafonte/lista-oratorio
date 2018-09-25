@@ -4,10 +4,10 @@ export class ApiCallResult {
     error: any;
     data: any;
 
-    constructor(error: any, data?: any) {
-        this.ok = error == null;
+    constructor(error?: any, data?: any) {
+        this.ok = error == undefined;
         this.error = error;
-        this.data = data || null;
+        this.data = data || undefined;
     }
 
     /**

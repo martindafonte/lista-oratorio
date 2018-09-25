@@ -1,5 +1,5 @@
-import db = require('./database');
-import {BaseModel} from './base-model';
+import db = require("./database");
+import { BaseModel } from "./base-model";
 export class User extends BaseModel {
 
   username: string;
@@ -9,17 +9,17 @@ export class User extends BaseModel {
 
   /**
    * Constructor of class User
-   * @param {string} username 
-   * @param {string} api_key 
-   * @param {string} token 
+   * @param {string} username
+   * @param {string} api_key
+   * @param {string} token
    */
   constructor(username: string, api_key: string, token: string) {
     super();
     this.username = username;
     this.api_key = api_key;
     this.token = token;
-    this._id = null;
-    this.boards_array = null;
+    this._id = undefined;
+    this.boards_array = undefined;
   }
 
   saveUser(callback) {
@@ -28,13 +28,13 @@ export class User extends BaseModel {
 
   getConfiguredBoards(callback) {
     try {
-      if (this.boards_array != null) {
-        callback(null, this.boards_array)
+      if (this.boards_array != undefined) {
+        callback(undefined, this.boards_array);
       } else {
-        let query = this._id != null ? { _id: this._id } : { username: this.username };
+        const query = this._id != undefined ? { _id: this._id } : { username: this.username };
         db.users.findOne(query, (err, data: User) => {
           if (err) {
-            callback(err, null); return;
+            callback(err, undefined); return;
           }
           this.boards_array = data.boards_array;
           callback(err, this.boards_array);
@@ -42,7 +42,7 @@ export class User extends BaseModel {
       }
     }
     catch (err) {
-      callback(err, null);
+      callback(err, undefined);
     }
   }
 
@@ -53,7 +53,7 @@ export class User extends BaseModel {
   }
 
   _getData() {
-    let data = { username: this.username, api_key: this.api_key, token: this.token, boards_array: null };
+    const data = { username: this.username, api_key: this.api_key, token: this.token, boards_array: undefined };
     if (this.boards_array)
       data.boards_array = this.boards_array;
     return data;
@@ -64,7 +64,7 @@ export class User extends BaseModel {
       if (err) {
         callback(err);
       } else {
-        let user = new User(data.username, data.api_key, data.token);
+        const user = new User(data.username, data.api_key, data.token);
         user._id = data._id;
         callback(err, user);
       }

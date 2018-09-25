@@ -2,9 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class ApiCallResult {
     constructor(error, data) {
-        this.ok = error == null;
+        this.ok = error == undefined;
         this.error = error;
-        this.data = data || null;
+        this.data = data || undefined;
     }
     /**
      * Returns true if an error ocurred and logs it to console
