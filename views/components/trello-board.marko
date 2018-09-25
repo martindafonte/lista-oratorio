@@ -5,6 +5,18 @@ class {
     }
 
 }
-<div style="min-height=100px;min-width=100px">
-  <a href="/boards/${input.board_id}">${input.board_name}</a>
+<div class="card mb-4 shadow-sm">
+  <div class="card-header">
+    <h4 class="my-0 font-weight-normal">${input.board_name}</h4>
+  </div>
+  <div class="card-body">
+    <ul class="list-unstyled mt-3 mb-4">
+      <li>Mojarras</li>
+      <li>Tortugas</li>
+      <li>Focas</li>
+      <li>Delfines</li>
+      <li>Orcas</li>
+    </ul>
+    <button type="button" class="btn btn-lg btn-block btn-primary" onclick="location.href = 'boards/${input.board_id}'">Seleccionar</button>
+  </div>
 </div>

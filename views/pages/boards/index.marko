@@ -1,9 +1,12 @@
 <include('../../layouts/default/template.marko')>
   <@title>Tableros</@title>
   <@body>
-    <main>Lista de tableros</main>
-    <div for(board in (input.boards||[]))>
-      <trello-board board_id=board.id board_name=board.name />
+    <div class="container">
+      <div class="card-deck mb-3 text-center">
+        <div for(board in (input.boards||[]))>
+          <trello-board board_id=board.id board_name=board.name/>
+        </div>
+      </div>
     </div>
   </@body>
 </include>

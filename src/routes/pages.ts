@@ -24,10 +24,13 @@ export function registerPages(app) {
   });
 
   app.get("/boards", (req, res) => {
-    res.marko(boards_view, { boards: [{ id: "lMr9XHiA", name: "Tablero" }, { id: "lMr9XHiA", name: "Tablero 2" }, { id: "lMr9XHiA", name: "Tablero 3" }] });
+    res.marko(boards_view, { boards: [{ id: "lMr9XHiA", name: "Tablero 1" }, { id: "lMr9XHiA", name: "Tablero 2" }, { id: "lMr9XHiA", name: "Tablero 3" }] });
   });
 
   app.get("/boards/:board_id", (req, res) => {
-    res.marko(editor_view, { board_id: req.params.board_id, board_name: "Tablero", listas: [] });
+    manager.getListsData().then(x => {
+      if (x && x.logIfError()) return res.status(500);
+      else res.marko(editor_view, { board_id: req.params.board_id, board_name: "Lista Villa", listas: x.data });
+    });
   });
 }

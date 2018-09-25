@@ -14,17 +14,12 @@
   </head>
   <body>
     <app-navbar/>
-    <div id="content">
-      <header>
-        <h1>Trello Lista Alpha</h1>
-      </header>
-      <main id="main">
-        <if(data.body)>
-          <include(data.body)/>
-        </if>
-        <else>El cuerpo de la página no pude ser cargado</else>
-      </main>
-    </div>
+    <main id="main">
+      <if(data.body)>
+        <include(data.body)/>
+      </if>
+      <else>El cuerpo de la página no pude ser cargado</else>
+    </main>
     <lasso-body/>
     <app-footer/>
   </body>
