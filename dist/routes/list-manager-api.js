@@ -4,7 +4,7 @@ const user_1 = require("./../models/user");
 const board_manager_1 = require("./../helpers/board-manager");
 const router = express.Router();
 //Crear un nuevo checklist
-router.post('/', (request, response) => {
+router.post('/create', (request, response) => {
     let token = process.env.TRELLO_TOKEN;
     let user = new user_1.User('me', process.env.TRELLO_APIKEY, token);
     if (!request.body.board_id) {

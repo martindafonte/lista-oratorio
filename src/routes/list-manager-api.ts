@@ -5,7 +5,7 @@ const router = express.Router();
 
 
 //Crear un nuevo checklist
-router.post('/', (request, response) => {
+router.post('/create', (request, response) => {
     let token = process.env.TRELLO_TOKEN;
     let user = new User('me', process.env.TRELLO_APIKEY, token);
     if (!request.body.board_id) {

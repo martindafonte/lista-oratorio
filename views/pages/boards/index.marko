@@ -3,7 +3,7 @@
   <@body>
     <main>Lista de tableros</main>
     <div for(board in (input.boards||[]))>
-      <trello-board board_id=board/>
+      <trello-board board_id=board.id board_name=board.name />
     </div>
   </@body>
 </include>

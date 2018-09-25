@@ -1,6 +1,31 @@
 <include('../../layouts/default/template.marko')>
   <@title>Editar listas</@title>
   <@body>
-    <main>Editor de listas</main>
+     <main>
+      <p>Crear una nueva lista en el tablero</p>
+      <form action="/api/lists/create" method="POST">
+        Nuevo Checklist:
+        <input type="text" name="date" maxlength="50" placeholder="21-Apr-2018"/>
+        <input type="hidden" name="board_id" hidden="true" value="${input.board_id}"/>
+        <button type="submit">Crear Lista</button>
+      </form>
+      <br/>
+      <br/>
+      <p>Cerrar una de las listas existentes</p><br>
+      <form action="/api/lists/close" method="POST">
+        Checklist:
+        <input type="text" name="date" maxlength="50" placeholder="21-Apr-2018"/><br>
+        Listas:<br/>
+        <for(lista in input.listas)>
+          <label>
+            ${lista.name}<input type="checkbox" name="lista_${lista.name}" value="${lista.id}"/>
+          </label><br>
+        </for>
+        Comentario:
+        <input type="text" name="comment" maxlength="100"/><br>
+        <input type="hidden" name="board_id" hidden="true" value="${input.board_id}"/>
+        <button type="submit">Cerrar Lista</button>
+      </form>
+    </main>
   </@body>
 </include>
