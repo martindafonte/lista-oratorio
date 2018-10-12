@@ -21,10 +21,7 @@ board-manager.js contiene la lógica de manejo de un tablero
 - **views** Vistas generadas con el framework Marko
 - **.env** Archivo que contiene variables de ambiente y secretos de la aplicación (no commitear)
 
-## Welcome to the Glitch BETA
+## Unit testing
 
-Click `Show` in the header to see your app live. Updates to your code will instantly deploy and update live.
-
-**Glitch** is the friendly community where you'll build the app of your dreams. Glitch lets you instantly create, remix, edit, and host an app, bot or site, and you can invite collaborators or helpers to simultaneously edit code with you.
-
-Find out more [about Glitch](https://glitch.com/about).
+- https://journal.artfuldev.com/unit-testing-node-applications-with-typescript-using-mocha-and-chai-384ef05f32b2
+- https://medium.com/@RupaniChirag/writing-unit-tests-in-typescript-d4719b8a0a40
