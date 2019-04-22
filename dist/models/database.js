@@ -1,9 +1,9 @@
-const Datastore = require('nedb');
-
+"use strict";
+const Datastore = require("nedb");
 // Security note: the database is saved to the file `datafile` on the local filesystem. It's deliberately placed in the `.data` directory
 // which doesn't get copied if someone remixes the project.
-const db = new Datastore({ filename: '.data/datafile', autoload: true });
-
+let users = new Datastore({ filename: '.data/users_datafile', autoload: true });
+let webhooks = new Datastore({ filename: '.data/webhooks_datafile', autoload: true });
 /*
 db.ensureIndex({ fieldName: 'cardId', unique: true }, function (err) {
   if (err) {
@@ -22,13 +22,17 @@ db.ensureIndex({ fieldName: 'snoozeTime' }, function (err) {
     console.log('🛠 Built index on snoozeTime');
   }
 });*/
-
-db.count({}, (err, count) => {
-  if (err) {
-    console.error(err);
-  } else {
-    console.info(`DB currently has ${count} items`);
-  }
-});
-
-module.exports = db;
+_count(users, 'users');
+_count(webhooks, 'webhooks');
+function _count(db, model_name) {
+    db.count({}, (err, count) => {
+        if (err) {
+            console.error(err);
+        }
+        else {
+            console.info(`DB currently has ${count} ${model_name}`);
+        }
+    });
+}
+module.exports = { users: users, webhooks: webhooks };
+//# sourceMappingURL=database.js.map
