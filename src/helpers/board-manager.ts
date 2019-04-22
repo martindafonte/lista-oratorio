@@ -10,6 +10,7 @@ export class BoardManager {
   boardId: string;
   private client: TrelloApiClient;
   default_checklist: string;
+  ignore: string[];
 
   /**
    * Constructor de Board Manager
@@ -20,7 +21,8 @@ export class BoardManager {
     this.user = user;
     this.boardId = board_id;
     this.client = new TrelloApiClient(user);
-    this.default_checklist = "2018"; // TODO: cambiar por parámetro asociado al usuario o similar
+    this.default_checklist = process.env.YEAR; //TODO: cambiar por parámetro asociado al usuario o similar
+    this.ignore = (process.env.IGNORE_LISTS || '').split(',');
   }
 
   /**
@@ -29,7 +31,9 @@ export class BoardManager {
   async getListsData() {
     const list_result = await this.client.getLists(this.boardId);
     if (list_result.logIfError()) return list_result;
-    list_result.data.map(x => { return { name: x.name, id: x.id }; });
+    list_result.data = list_result.data
+      .filter(x => this.ignore.indexOf(x.name) < 0)
+      .map(x => { return { name: x.name, id: x.id } });
     return list_result;
   }
 
@@ -43,8 +47,9 @@ export class BoardManager {
   /**
    * Adds or updates a checklist to the header card of each list
    * @param {string} date Name of the ckeclist to add to the header card
+   * @param {Array.<string>} lists Listas en las que crear la nueva fecha
    */
-  async addDateToLists(date: string) {
+  async addDateToLists(date: string, lists: Array<string> = []) {
     return await this._applyToAllLists(this._createOrUpdateDateInList, [], date);
   }
 
@@ -92,7 +97,8 @@ export class BoardManager {
    * @param {any} list list with cards and its checklists
    * @param {Array.<string>} listas id of the list to close
    */
-  async closeDateInList(list: any, date: string, comment) {
+  async closeDateInList(list: any, date: string, comment, listas: Array<string> = []) {
+    if (listas && listas.indexOf(list.id) < 0) return null;//no está marcada la lista
     const result = await this._getHeaderCardDetails(list.name, list.cards);
     if (result.logIfError() || result.data == undefined) return result;
     const header_data = result.data;

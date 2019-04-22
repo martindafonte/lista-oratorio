@@ -3,6 +3,17 @@ import { User } from './../models/user';
 import { BoardManager } from './../helpers/board-manager';
 const router = express.Router();
 
+function _processListsFromBody(body){
+    let listas = [];
+      for (let prop in body) {
+        console.log(prop);
+          if (prop.startsWith("lista_")) {
+              listas.push(body[prop]);
+            console.log(prop);
+          }
+      }
+    return listas;
+  }
 
 //Crear un nuevo checklist
 router.post('/create', (request, response) => {
@@ -12,8 +23,9 @@ router.post('/create', (request, response) => {
         response.send('No se encontró un parámetro board_id en el pedido');
         return;
     }
+    let listas = _processListsFromBody(request.body);
     let manager = new BoardManager(user, request.body.board_id);
-    manager.addDateToLists(request.body.date).then(x => {
+    manager.addDateToLists(request.body.date, listas).then(x => {
         if (x && x.ok) response.send('Se completó la creación de la lista');
         else response.send('Resultado de la operación: ' + JSON.stringify(x));
     }
@@ -29,12 +41,7 @@ router.post('/close', (request, response) => {
         response.send('No se encontró un parámetro board_id en el pedido');
         return;
     }
-    let listas = [];
-    for (let prop in request.body) {
-        if (prop.indexOf("lista_") == 0) {
-            listas.push(request.body[prop]);
-        }
-    }
+    let listas = _processListsFromBody(request.body);
     let manager = new BoardManager(user, request.body.board_id);
     manager.closeDate(request.body.date, request.body.comment, listas).then(
         res => {
