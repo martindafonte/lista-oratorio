@@ -25,7 +25,3 @@
 
 [] (node:10692) UnhandledPromiseRejectionWarning: StatusCodeError: 400 - "invalid value for name" warning.js:18b (node:10692) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
 [] Convertir el código de Trello API Client para que devuelva {err: ,data: }
-
-# Proyecto
-
-[ ] Correr tslint y agregarlo al proceso de build

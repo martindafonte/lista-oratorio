@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="es" class="${data.htmlClassName}">
+  <head>
+    <meta charset="UTF-8"/>
+    <title>
+      <if(data.title)>
+        <include(data.title)/>
+      </if>
+      <else>Lista Oratorio</else>
+    </title>
+    <app-header/>
+  </head>
+  <body>
+    <div id="content">
+      <main id="main">
+        <if(data.body)>
+          <include(data.body)/>
+        </if>
+        <else>El cuerpo de la página no pude ser cargado</else>
+      </main>
+    </div>
+    <app-footer/>
+  </body>
+  <script src="https://code.jquery.com/jquery-2.2.1.min.js" integrity="sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00=" crossorigin="anonymous"/>
+  <script src="/js/client.js"/>
+</html>

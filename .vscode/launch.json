@@ -7,17 +7,15 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Lunch ts",
-      "protocol": "inspector",
-      "args": [
-        "src/app.ts"
-      ],
-      "cwd": "${workspaceRoot}",
-      "runtimeArgs": [
-        "-r",
-        "ts-node/register"
-      ],
-      "internalConsoleOptions": "openOnSessionStart"
+      "name": "Iniciar servidor",
+      "program": "${workspaceFolder}\\src\\app.js"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "envFile": "${workspaceFolder}/.env" ,
+      "name": "Test File",
+      "program": "${file}"
     }
   ]
 }
