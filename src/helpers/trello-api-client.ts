@@ -2,12 +2,11 @@ import { User } from './../models/user';
 import { ApiCallResult as Result } from './api-call-result';
 import querystring = require("querystring");
 import request_promise = require('request-promise-native');
+import { retry } from './retry';
 import rateLimit = require('rate-limit-promise')
 
-let limiter = rateLimit(95, 10000); //límite por token es de 100 cada 10s
-
 export class TrelloApiClient {
-
+  static limiter = rateLimit(95, 10000); //límite por token es de 100 cada 10s
   user: User;
 
   /**
@@ -120,7 +119,7 @@ export class TrelloApiClient {
    * @param {string} position bottom or top
    * @returns {Promise<Result>}
    */
-  async addChecklistItem(checklist_id: string, item_name: string, checked: boolean, position: string|number = 'bottom'): Promise<Result> {
+  async addChecklistItem(checklist_id: string, item_name: string, checked: boolean, position: string | number = 'bottom'): Promise<Result> {
     let options = {
       name: item_name,
       pos: position,
@@ -205,6 +204,7 @@ export class TrelloApiClient {
    * @throws Exceptions when a call failed on the API
    */
   _callTrello(method: string, uri: string, args: any = null): Promise<Result> {
+    console.log("Calling trello "+method+": "+uri);
     let host = "https://api.trello.com/1";
     args = args || {};
     var url = host + (uri[0] === "/" ? "" : "/") + uri;
@@ -232,9 +232,9 @@ export class TrelloApiClient {
       options.json = this._addAuthArgs(TrelloApiClient._parseQuery(uri, args));
     }
     // console.log('Making request with:' + JSON.stringify(options));
-    return limiter().then(() =>
-      request_promise[method.toLowerCase()](options))
-      .then(data => new Result(null, data))
+    return TrelloApiClient.limiter().then(async () =>
+      retry(() => request_promise[method.toLowerCase()](options), 3, 150, true)
+    ).then(data => new Result(null, data))
       //TODO diferenciar si el error es de limiter o de request_promise
       .catch(err => new Result(err));
   }
