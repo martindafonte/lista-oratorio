@@ -25,3 +25,7 @@ board-manager.js contiene la lógica de manejo de un tablero
 
 - https://journal.artfuldev.com/unit-testing-node-applications-with-typescript-using-mocha-and-chai-384ef05f32b2
 - https://medium.com/@RupaniChirag/writing-unit-tests-in-typescript-d4719b8a0a40
+
+## Retry policy
+
+- https://gitlab.com/snippets/1775781
