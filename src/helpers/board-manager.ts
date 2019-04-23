@@ -43,10 +43,13 @@ export class BoardManager {
    * Update all checklists of all lists
    */
   async updateAllLists() {
-    if (!this.updatingBoard)
-      return await this._applyToAllLists(this._updateAllDatesInList);
-    else
+    if (this.updatingBoard) //Si se está actualizando no hago caso al webhook
       return new Result(null, null);
+    try {
+      this.updatingBoard = true;
+      return await this._applyToAllLists(this._updateAllDatesInList);
+    }
+    finally { this.updatingBoard = false; }
   }
 
   /**
@@ -60,7 +63,7 @@ export class BoardManager {
       this.updatingBoard = true;
       return await this._applyToAllLists(this._createOrUpdateDateInList, listas, date);
     }
-    finally { this.updatingBoard = false }
+    finally { this.updatingBoard = false; }
   }
 
   /**
@@ -75,7 +78,7 @@ export class BoardManager {
       this.updatingBoard = true;
       return await this._applyToAllLists(this._closeDateInList, listas, date, comment);
     }
-    finally { this.updatingBoard = false }
+    finally { this.updatingBoard = false; }
   }
 
   /**
