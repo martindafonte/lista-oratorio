@@ -12,6 +12,8 @@ export class BoardManager {
   default_checklist: string;
   ignore: string[];
 
+  updatingBoard: boolean = false;
+
   /**
    * Constructor de Board Manager
    * @param {User} user
@@ -41,16 +43,24 @@ export class BoardManager {
    * Update all checklists of all lists
    */
   async updateAllLists() {
-    return await this._applyToAllLists(this._updateAllDatesInList);
+    if (!this.updatingBoard)
+      return await this._applyToAllLists(this._updateAllDatesInList);
+    else
+      return new Result(null, null);
   }
 
   /**
    * Adds or updates a checklist to the header card of each list
    * @param {string} date Name of the ckeclist to add to the header card
-   * @param {Array.<string>} lists Listas en las que crear la nueva fecha
+   * @param {Array.<string>} listas Listas en las que crear la nueva fecha
    */
-  async addDateToLists(date: string, lists: Array<string> = []) {
-    return await this._applyToAllLists(this._createOrUpdateDateInList, [], date);
+  async addDateToLists(date: string, listas: Array<string> = []) {
+
+    try {
+      this.updatingBoard = true;
+      return await this._applyToAllLists(this._createOrUpdateDateInList, listas, date);
+    }
+    finally { this.updatingBoard = false }
   }
 
   /**
@@ -61,7 +71,11 @@ export class BoardManager {
    * @returns {Promise<Result>}
    */
   async closeDate(date: string, comment: string, listas: Array<string> = []): Promise<Result> {
-    return await this._applyToAllLists(this.closeDateInList, listas, date, comment);
+    try {
+      this.updatingBoard = true;
+      return await this._applyToAllLists(this._closeDateInList, listas, date, comment);
+    }
+    finally { this.updatingBoard = false }
   }
 
   /**
@@ -97,7 +111,7 @@ export class BoardManager {
    * @param {any} list list with cards and its checklists
    * @param {Array.<string>} listas id of the list to close
    */
-  async closeDateInList(list: any, date: string, comment, listas: Array<string> = []) {
+  async _closeDateInList(list: any, date: string, comment, listas: Array<string> = []) {
     if (listas && listas.indexOf(list.id) < 0) return null;//no está marcada la lista
     const result = await this._getHeaderCardDetails(list.name, list.cards);
     if (result.logIfError() || result.data == undefined) return result;
