@@ -187,8 +187,8 @@ export class BoardManager {
       const promise = this.client.removeChecklistItem(item.idChecklist, item.id);
       change_promise_array.push(promise);
     });
-    changes.add.forEach((name, i) => {
-      const promise = this.client.addChecklistItem(checklist.id, name, false, i * 10/*posicion*/);
+    changes.add.forEach((item) => {
+      const promise = this.client.addChecklistItem(checklist.id, item.name, false, item.index/*posicion*/);
       change_promise_array.push(promise);
     });
     return await BoardManagerUtils.resultFromPromiseArray(change_promise_array);

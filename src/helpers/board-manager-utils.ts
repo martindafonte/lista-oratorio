@@ -36,7 +36,7 @@ export class BoardManagerUtils {
    * @param {*} header_card
    */
   static getCardNameList(list: any, header_card: any) {
-    return list.filter(x => x.id !== header_card.id).map(x => x.name).sort();
+    return list.filter((x: { id: any; name: string; }) => x.id !== header_card.id).map((x: { name: string; }) => x.name).sort((a: string, b: string) => a.localeCompare(b));
   }
 
   static findCardByName(name, cards) {
@@ -55,7 +55,9 @@ export class BoardManagerUtils {
       // Remove all items not found on the new array
       remove: original_array.filter(x => !new_array.find(y => y == x)),
       // Add all items not existing on the new array
-      add: new_array.filter(x => !original_array.find(y => y == x))
+      add: new_array
+        .map((x, i) => { return { name: x, index: i * 10 + 1 } })
+        .filter(x => !original_array.find(y => y == x.name))
     };
   }
 }
