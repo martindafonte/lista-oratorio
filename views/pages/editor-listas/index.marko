@@ -15,8 +15,8 @@
             Listas:<br/>
             <for(lista in input.listas)>
               <div class="custom-control custom-checkbox">
-                <input type="checkbox" class="custom-control-input" name="lista_${lista.name}" value="${lista.id}" id="check_${lista.id}" checked/>
-                <label class="custom-control-label" for="check_${lista.id}">${lista.name}</label>
+                <input type="checkbox" class="custom-control-input" name="lista_${lista.name}" value="${lista.id}" id="open_check_${lista.id}" checked/>
+                <label class="custom-control-label" for="open_check_${lista.id}">${lista.name}</label>
               </div>
             </for>
             <button class="btn btn-primary btn-lg" type="submit">Crear Lista</button>
@@ -38,8 +38,8 @@
             Listas:<br/>
             <for(lista in input.listas)>
               <div class="custom-control custom-checkbox">
-                <input type="checkbox" class="custom-control-input" name="lista_${lista.name}" value="${lista.id}" id="check_${lista.id}" checked/>
-                <label class="custom-control-label" for="check_${lista.id}">${lista.name}</label>
+                <input type="checkbox" class="custom-control-input" name="lista_${lista.name}" value="${lista.id}" id="close_check_${lista.id}" checked/>
+                <label class="custom-control-label" for="close_check_${lista.id}">${lista.name}</label>
               </div>
             </for>
             <div class="mb-3">
