@@ -5,7 +5,8 @@
         "**/*.marko.js": true,
         "**/*.map": true,
         ".glitch-assets":true,
-        "node_modules":true
+        "node_modules":true,
+        ".cache":true
     },
     "search.exclude": {
         "**/node_modules": true,
