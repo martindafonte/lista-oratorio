@@ -112,10 +112,8 @@ export class BoardManager {
    * Close one checklis on the header cards of the given list
    * @param {string} date name of the checklist to close
    * @param {any} list list with cards and its checklists
-   * @param {Array.<string>} listas id of the list to close
    */
-  async _closeDateInList(list: any, date: string, comment, listas: Array<string> = []) {
-    if (listas && listas.indexOf(list.id) < 0) return null;//no está marcada la lista
+  async _closeDateInList(list: any, date: string, comment) {
     const result = await this._getHeaderCardDetails(list.name, list.cards);
     if (result.logIfError() || result.data == undefined) return result;
     const header_data = result.data;
