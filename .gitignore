@@ -68,4 +68,5 @@ built/
 
 #lasso
 .cache/*
+public/default
 public/default/*
