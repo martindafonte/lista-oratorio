@@ -12,7 +12,7 @@ export class BoardManager {
   default_checklist: string;
   ignore: string[];
 
-  updatingBoard: boolean = false;
+  static updatingBoard: boolean = false;
 
   /**
    * Constructor de Board Manager
@@ -43,13 +43,13 @@ export class BoardManager {
    * Update all checklists of all lists
    */
   async updateAllLists() {
-    if (this.updatingBoard) //Si se está actualizando no hago caso al webhook
+    if (BoardManager.updatingBoard) //Si se está actualizando no hago caso al webhook
       return new Result(null, null);
     try {
-      this.updatingBoard = true;
+      BoardManager.updatingBoard = true;
       return await this._applyToAllLists(this._updateAllDatesInList);
     }
-    finally { this.updatingBoard = false; }
+    finally { BoardManager.updatingBoard = false; }
   }
 
   /**
@@ -60,10 +60,10 @@ export class BoardManager {
   async addDateToLists(date: string, listas: Array<string> = []) {
 
     try {
-      this.updatingBoard = true;
+      BoardManager.updatingBoard = true;
       return await this._applyToAllLists(this._createOrUpdateDateInList, listas, date);
     }
-    finally { this.updatingBoard = false; }
+    finally { BoardManager.updatingBoard = false; }
   }
 
   /**
@@ -75,10 +75,10 @@ export class BoardManager {
    */
   async closeDate(date: string, comment: string, listas: Array<string> = []): Promise<Result> {
     try {
-      this.updatingBoard = true;
+      BoardManager.updatingBoard = true;
       return await this._applyToAllLists(this._closeDateInList, listas, date, comment);
     }
-    finally { this.updatingBoard = false; }
+    finally { BoardManager.updatingBoard = false; }
   }
 
   /**
