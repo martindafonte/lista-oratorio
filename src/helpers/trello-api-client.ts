@@ -204,7 +204,7 @@ export class TrelloApiClient {
    * @throws Exceptions when a call failed on the API
    */
   _callTrello(method: string, uri: string, args: any = null): Promise<Result> {
-    console.log("Calling trello "+method+": "+uri);
+    console.log("Calling trello " + method + ": " + uri);
     let host = "https://api.trello.com/1";
     args = args || {};
     var url = host + (uri[0] === "/" ? "" : "/") + uri;
@@ -232,11 +232,15 @@ export class TrelloApiClient {
       options.json = this._addAuthArgs(TrelloApiClient._parseQuery(uri, args));
     }
     // console.log('Making request with:' + JSON.stringify(options));
-    return TrelloApiClient.limiter().then(async () =>
-      retry(() => request_promise[method.toLowerCase()](options), 3, 150, true)
-    ).then(data => new Result(null, data))
-      //TODO diferenciar si el error es de limiter o de request_promise
-      .catch(err => new Result(err));
+    //Se declara como función para que mantenga la localidad de los parámetros method y options y no se pise en múltiples llamadas
+    const request = (method: string, options: any) => {
+      return TrelloApiClient.limiter().then(async () =>
+        retry(() => request_promise[method.toLowerCase()](options), 3, 150, true)
+      ).then((data: any) => new Result(null, data))
+        //TODO diferenciar si el error es de limiter o de request_promise
+        .catch((err: any) => new Result(err));
+    };
+    return request(method, options);
   }
 
   /**
