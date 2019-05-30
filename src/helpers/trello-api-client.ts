@@ -3,10 +3,17 @@ import { ApiCallResult as Result } from './api-call-result';
 import querystring = require("querystring");
 import request_promise = require('request-promise-native');
 import { retry } from './retry';
-import rateLimit = require('rate-limit-promise')
+import Bottleneck from "bottleneck";
+
 
 export class TrelloApiClient {
-  static limiter = rateLimit(95, 10000); //límite por token es de 100 cada 10s
+  static limiter = new Bottleneck({
+    minTime: 5,
+    maxConcurrent: 2,
+    reservoir: 95,
+    reservoirRefreshInterval: 10000,
+    reservoirRefreshAmount: 95
+  });
   user: User;
 
   /**
@@ -16,7 +23,7 @@ export class TrelloApiClient {
   constructor(user: User) {
     this.user = user;
     if (!this._authenticateUser(this.user)) {
-      //TODO: Tirrar error y salir
+      // TODO: Tirrar error y salir
     }
   }
 
@@ -27,10 +34,9 @@ export class TrelloApiClient {
    * @returns {Promise<Result>}
    */
   async getLists(board_id: string): Promise<Result> {
-    let res = await this._callTrello('GET', `/boards/${board_id}/lists`, {
+    return await this._callTrello('GET', `/boards/${board_id}/lists`, {
       filter: 'open'
     });
-    return res;
   }
 
   /**
@@ -39,30 +45,28 @@ export class TrelloApiClient {
    * @returns {Promise<Result>}
    */
   async getAllCards(board_id: string): Promise<Result> {
-    let options = {
-      cards: 'visible',
-      card_fields: 'name,id,idList',
-      checklists: 'all'
+    const options = {
+      cards: "visible",
+      card_fields: "name,id,idList",
+      checklists: "all"
     };
-    let res = await this._callTrello('GET', `/boards/${board_id}/cards`, options);
-    return res;
+    return await this._callTrello("GET", `/boards/${board_id}/cards`, options);
   }
 
-  //Permite obtener los checklist que están marcados
-  //checkItemStates: 'true'
+  // Permite obtener los checklist que están marcados
+  // checkItemStates: 'true'
   /**
-   * 
-   * @param {*} card_id 
+   * Retorna los detalles de una tarjeta
+   * @param {*} card_id
    * @returns {Promise<Result>}
    */
   async getCardDetails(card_id: any): Promise<Result> {
-    let options = {
+    const options = {
       fields: 'id,name,idChecklists',
       checklists: 'all',
       checklist_fields: 'id,name'
     };
-    let res = await this._callTrello('GET', `/cards/${card_id}`, options);
-    return res;
+    return await this._callTrello('GET', `/cards/${card_id}`, options);
   }
 
   /**
@@ -97,9 +101,9 @@ export class TrelloApiClient {
   }
 
   /**
-   * 
-   * @param {*} card_id 
-   * @param {*} checklist_name 
+   * Agrega un checklist a una tarjeta
+   * @param {*} card_id
+   * @param {*} checklist_name
    * @returns {Promise<Result>}
    */
   async addCheckList(card_id: any, checklist_name: any, base_checklist_id): Promise<Result> {
@@ -176,7 +180,7 @@ export class TrelloApiClient {
    * @returns {Promise<Result>}
    */
   async removeChecklistItem(checklist_id: any, item_id: any): Promise<Result> {
-    return await this._callTrello('DELETE', `/checklists/${checklist_id}/checkItems/${item_id}`);
+    return await this._callTrello("DELETE", `/checklists/${checklist_id}/checkItems/${item_id}`);
   }
 
   /**
@@ -185,7 +189,7 @@ export class TrelloApiClient {
    * @returns {Promise<Result>}
    */
   async removeChecklist(checklist_id: any): Promise<Result> {
-    return await this._callTrello('DELETE', `/checklists/${checklist_id}`);
+    return await this._callTrello("DELETE", `/checklists/${checklist_id}`);
   }
 
   async _authenticateUser(user) {
@@ -203,20 +207,20 @@ export class TrelloApiClient {
    * @returns {Promise<Result>}
    * @throws Exceptions when a call failed on the API
    */
-  _callTrello(method: string, uri: string, args: any = null): Promise<Result> {
-    console.log("Calling trello " + method + ": " + uri);
-    let host = "https://api.trello.com/1";
+  _callTrello(method: string, uri: string, args: any = undefined): Promise<Result> {
+
+    const host = "https://api.trello.com/1";
     args = args || {};
-    var url = host + (uri[0] === "/" ? "" : "/") + uri;
+    let url = host + (uri[0] === "/" ? "" : "/") + uri;
 
     if (method === "GET") {
       url += "?" + querystring.stringify(this._addAuthArgs(TrelloApiClient._parseQuery(uri, args)));
     }
-    var options = {
+    const options = {
       url: url,
       method: method
     } as any;
-    //for methods other than GET
+    // for methods other than GET
     if (args.attachment) {
       options.formData = {
         key: this.user.api_key,
@@ -231,16 +235,21 @@ export class TrelloApiClient {
     } else {
       options.json = this._addAuthArgs(TrelloApiClient._parseQuery(uri, args));
     }
-    // console.log('Making request with:' + JSON.stringify(options));
-    //Se declara como función para que mantenga la localidad de los parámetros method y options y no se pise en múltiples llamadas
-    const request = (method: string, options: any) => {
-      return TrelloApiClient.limiter().then(async () =>
-        retry(() => request_promise[method.toLowerCase()](options), 3, 150, true)
-      ).then((data: any) => new Result(null, data))
-        //TODO diferenciar si el error es de limiter o de request_promise
-        .catch((err: any) => new Result(err));
-    };
-    return request(method, options);
+    const wrapped = TrelloApiClient.limiter.wrap(this._makeRequest);
+    return wrapped(method, options);
+  }
+
+  private async _makeRequest(method: string, options: any) {
+    try {
+      const data = await retry(() => {
+        console.log("Calling trello " + method + ": " + options.url);
+        return request_promise[method.toLowerCase()](options);
+      }, 3, 150, true);
+      return new Result(undefined, data);
+    }
+    catch (err) {
+      return new Result(err);
+    }
   }
 
   /**
