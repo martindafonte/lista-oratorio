@@ -8,8 +8,8 @@ import Bottleneck from "bottleneck";
 
 export class TrelloApiClient {
   static limiter = new Bottleneck({
-    minTime: 5,
-    maxConcurrent: 2,
+    minTime: 10,
+    maxConcurrent: 1,
     reservoir: 95,
     reservoirRefreshInterval: 10000,
     reservoirRefreshAmount: 95
@@ -236,15 +236,12 @@ export class TrelloApiClient {
       options.json = this._addAuthArgs(TrelloApiClient._parseQuery(uri, args));
     }
     const wrapped = TrelloApiClient.limiter.wrap(this._makeRequest);
-    return wrapped(method, options);
+    return ((m, o) => retry(() => wrapped(m, o), 3, 150, true))(method, options);
   }
 
   private async _makeRequest(method: string, options: any) {
     try {
-      const data = await retry(() => {
-        console.log("Calling trello " + method + ": " + options.url);
-        return request_promise[method.toLowerCase()](options);
-      }, 3, 150, true);
+      const data = await request_promise[method.toLowerCase()](options);
       return new Result(undefined, data);
     }
     catch (err) {
