@@ -65,7 +65,7 @@
     "@types/shelljs": "^0.8.0",
     "chai": "^4.2.0",
     "concurrently": "^4",
-    "mocha": "^5.2.0",
+    "mocha": "^10.2.0",
     "nodemon": "^1.18.4",
     "shelljs": "^0.8.5",
     "ts-node": "^7.0.1",
